@@ -35,7 +35,7 @@ float upCamPieY = 1;
 float upCamPieZ = 0;
 
 float vertices[NUVE][3];
-int caras[NUCA][3];
+int caras[NUCA][4];
 
 int cargaObjeto(){
 	char linea[128];
@@ -64,7 +64,8 @@ int cargaObjeto(){
 				printf("%d: ", contador_separaciones);
 				if (contador_separaciones>0){
 					vertices[contador_punto][contador_separaciones - 1] = atof(aspe);
-					printf("%s guardado en [%d][%d]\n\t", aspe, contador_punto, contador_separaciones - 1);
+					printf("%s -> VERTICES[%d][%d]\n\t", aspe, contador_punto, contador_separaciones - 1);
+					printf("EL QUE ESTÁ MAL: %f ESTE, %f %f\n", vertices[0][0], vertices[0][1], vertices[0][2]);
 				}
 				else{
 					printf(" %s\n\t", aspe);
@@ -78,8 +79,7 @@ int cargaObjeto(){
 			while (aspe != NULL){
 				printf("%d: ", contador_separaciones);
 				if (contador_separaciones>0){
-					caras[contador_cara][contador_separaciones - 1] = atof(aspe);
-					printf("%s guardado en [%d][%d]\n\t", aspe, contador_cara, contador_separaciones - 1);
+					caras[contador_cara][contador_separaciones - 1] = atoi(aspe);
 				}
 				else{
 					printf(" %s\n\t", aspe);
@@ -97,22 +97,18 @@ int cargaObjeto(){
 	return 0;
 }
 void dibujaObjeto(){
-
-	//int contadorCARAS = 0;
-	//int contadorVERTICES = 0;
-	//for (contadorCARAS = 0; contadorCARAS < NUCA; contadorCARAS++){
-	//	glBegin(GL_POLYGON);
-	//	for (contadorVERTICES = 0; contadorVERTICES < NUCA; contadorVERTICES++){
-	//		glVertex3f(vertices[contadorVERTICES][0], vertices[contadorVERTICES][1], vertices[contadorVERTICES][2]);//V0
-	//	}
-	//	glEnd();
-	//}
-	glBegin(GL_POLYGON);
-	glVertex3f(vertices[caras[0][0] - 1][0], vertices[caras[0][0] - 1][1], vertices[caras[0][0] - 1][2]);
-	glVertex3f(vertices[caras[0][1] - 1][0], vertices[caras[1][0] - 1][1], vertices[caras[0][1] - 1][2]);
-	glVertex3f(vertices[caras[0][2] - 1][0], vertices[caras[2][0] - 1][1], vertices[caras[0][2] - 1][2]);
-	glVertex3f(vertices[caras[0][3] - 1][0], vertices[caras[3][0] - 1][1], vertices[caras[0][3] - 1][2]);
-	glEnd();
+	int contadorCARAS = 0;
+	int contadorVERTICES = 0;
+	for (contadorCARAS = 0; contadorCARAS < NUCA; contadorCARAS++){
+		glBegin(GL_POLYGON);
+		for (contadorVERTICES = 0; contadorVERTICES < NUCA; contadorVERTICES++){
+			glVertex3f(vertices[caras[contadorCARAS][0] - 1][0], vertices[caras[contadorCARAS][0] - 1][1], vertices[caras[contadorCARAS][0] - 1][2]);
+			glVertex3f(vertices[caras[contadorCARAS][1] - 1][0], vertices[caras[contadorCARAS][1] - 1][1], vertices[caras[contadorCARAS][1] - 1][2]);
+			glVertex3f(vertices[caras[contadorCARAS][2] - 1][0], vertices[caras[contadorCARAS][2] - 1][1], vertices[caras[contadorCARAS][2] - 1][2]);
+			glVertex3f(vertices[caras[contadorCARAS][3] - 1][0], vertices[caras[contadorCARAS][3] - 1][1], vertices[caras[contadorCARAS][3] - 1][2]);
+		}
+		glEnd();
+	}
 }
 void reshape(int width, int height) {
 	glViewport(0, 0, width, height);
