@@ -61,10 +61,12 @@ int cargaObjeto(){
 			aspe = strtok_s(NULL, delimitadores, &contexto);
 		}
 		else if (!strcmp(aspe, "v")){
+			//Aquí se guardan las variables x,y,z del objeto vertices[]
 			vertices[contador_punto].setAll(aspe, delimitadores, contexto);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
 			contador_punto++;
 		}
 		else if (!strcmp(aspe, "f")){
+			//Aquí podríamos cambiar por una clase Caras para que recibamos los valores.
 			while (aspe != NULL){
 				printf("%d: ", contador_separaciones);
 				if (contador_separaciones>0){
@@ -90,12 +92,10 @@ void dibujaObjeto(){
 	int contadorVERTICES = 0;
 	for (contadorCARAS = 0; contadorCARAS < NUCA; contadorCARAS++){
 		glBegin(GL_POLYGON);
-		for (contadorVERTICES = 0; contadorVERTICES < NUCA; contadorVERTICES++){
 			glVertex3f(vertices[caras[contadorCARAS][0] - 1].x, vertices[caras[contadorCARAS][0] - 1].y, vertices[caras[contadorCARAS][0] - 1].z);
 			glVertex3f(vertices[caras[contadorCARAS][1] - 1].x, vertices[caras[contadorCARAS][1] - 1].y, vertices[caras[contadorCARAS][1] - 1].z);
 			glVertex3f(vertices[caras[contadorCARAS][2] - 1].x, vertices[caras[contadorCARAS][2] - 1].y, vertices[caras[contadorCARAS][2] - 1].z);
 			glVertex3f(vertices[caras[contadorCARAS][3] - 1].x, vertices[caras[contadorCARAS][3] - 1].y, vertices[caras[contadorCARAS][3] - 1].z);
-		}
 		glEnd();
 	}
 }
