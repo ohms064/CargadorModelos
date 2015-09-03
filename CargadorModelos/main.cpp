@@ -1,9 +1,10 @@
 #include < stdlib.h>
 #include < GL/glut.h>
 #include < stdio.h>
-
+#include "Vertices.h"
 #include <iostream>
 #include <fstream>
+#include <queue>
 using namespace std;
 
 #define VELOCIDAD 2;
@@ -34,7 +35,7 @@ float upCamPieX = 0;
 float upCamPieY = 1;
 float upCamPieZ = 0;
 
-float vertices[NUVE][3];
+Vertices vertices[NUVE];
 int caras[NUCA][4];
 
 int cargaObjeto(){
@@ -45,9 +46,9 @@ int cargaObjeto(){
 	int contador_cara = 0;
 	while (fe.getline(linea, 128) && strcmp(linea, "")){
 		printf("LINEA NO %d:\n\t", contador_lineas++);	//printf("%s\n", linea);
-		char* contexto = NULL;
 		char delimitadores[] = " ";
 		char*  aspe;
+		char* contexto = NULL;
 		aspe = strtok_s(linea, delimitadores, &contexto); //aspe = Arreglo de Separaciones Por Espacios
 
 		int contador_separaciones = 0;
@@ -60,19 +61,7 @@ int cargaObjeto(){
 			aspe = strtok_s(NULL, delimitadores, &contexto);
 		}
 		else if (!strcmp(aspe, "v")){
-			while (aspe != NULL){
-				printf("%d: ", contador_separaciones);
-				if (contador_separaciones>0){
-					vertices[contador_punto][contador_separaciones - 1] = atof(aspe);
-					printf("%s -> VERTICES[%d][%d]\n\t", aspe, contador_punto, contador_separaciones - 1);
-					printf("EL QUE ESTÁ MAL: %f ESTE, %f %f\n", vertices[0][0], vertices[0][1], vertices[0][2]);
-				}
-				else{
-					printf(" %s\n\t", aspe);
-				}
-				contador_separaciones++;
-				aspe = strtok_s(NULL, delimitadores, &contexto);
-			}
+			vertices[contador_punto].setAll(aspe, delimitadores, contexto);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
 			contador_punto++;
 		}
 		else if (!strcmp(aspe, "f")){
@@ -102,10 +91,10 @@ void dibujaObjeto(){
 	for (contadorCARAS = 0; contadorCARAS < NUCA; contadorCARAS++){
 		glBegin(GL_POLYGON);
 		for (contadorVERTICES = 0; contadorVERTICES < NUCA; contadorVERTICES++){
-			glVertex3f(vertices[caras[contadorCARAS][0] - 1][0], vertices[caras[contadorCARAS][0] - 1][1], vertices[caras[contadorCARAS][0] - 1][2]);
-			glVertex3f(vertices[caras[contadorCARAS][1] - 1][0], vertices[caras[contadorCARAS][1] - 1][1], vertices[caras[contadorCARAS][1] - 1][2]);
-			glVertex3f(vertices[caras[contadorCARAS][2] - 1][0], vertices[caras[contadorCARAS][2] - 1][1], vertices[caras[contadorCARAS][2] - 1][2]);
-			glVertex3f(vertices[caras[contadorCARAS][3] - 1][0], vertices[caras[contadorCARAS][3] - 1][1], vertices[caras[contadorCARAS][3] - 1][2]);
+			glVertex3f(vertices[caras[contadorCARAS][0] - 1].x, vertices[caras[contadorCARAS][0] - 1].y, vertices[caras[contadorCARAS][0] - 1].z);
+			glVertex3f(vertices[caras[contadorCARAS][1] - 1].x, vertices[caras[contadorCARAS][1] - 1].y, vertices[caras[contadorCARAS][1] - 1].z);
+			glVertex3f(vertices[caras[contadorCARAS][2] - 1].x, vertices[caras[contadorCARAS][2] - 1].y, vertices[caras[contadorCARAS][2] - 1].z);
+			glVertex3f(vertices[caras[contadorCARAS][3] - 1].x, vertices[caras[contadorCARAS][3] - 1].y, vertices[caras[contadorCARAS][3] - 1].z);
 		}
 		glEnd();
 	}
