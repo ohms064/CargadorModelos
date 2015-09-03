@@ -2,9 +2,10 @@
 #include < GL/glut.h>
 #include < stdio.h>
 #include "Vertices.h"
+#include "Cara.h"
 #include <iostream>
 #include <fstream>
-#include <queue>
+#include <string>
 using namespace std;
 
 #define VELOCIDAD 2;
@@ -36,7 +37,7 @@ float upCamPieY = 1;
 float upCamPieZ = 0;
 
 Vertices vertices[NUVE];
-int caras[NUCA][4];
+Cara caras[NUCA];
 
 int cargaObjeto(){
 	char linea[128];
@@ -65,19 +66,16 @@ int cargaObjeto(){
 			contador_punto++;
 		}
 		else if (!strcmp(aspe, "f")){
+			aspe = strtok_s(NULL, delimitadores, &contexto);
+			printf("Cara %d ", contador_cara);
 			while (aspe != NULL){
-				printf("%d: ", contador_separaciones);
-				if (contador_separaciones>0){
-					caras[contador_cara][contador_separaciones - 1] = atoi(aspe);
-				}
-				else{
-					printf(" %s\n\t", aspe);
-				}
-				contador_separaciones++;
+				caras[contador_cara].setCara(aspe);
 				aspe = strtok_s(NULL, delimitadores, &contexto);
+				printf("Tam: %d", caras[contador_cara].vertice.size());
 			}
+			caras[contador_cara].printVertice();
 			contador_cara++;
-		}
+		}		
 		else{
 			//printf("OTROS     : ");
 		}
@@ -90,11 +88,9 @@ void dibujaObjeto(){
 	int contadorVERTICES = 0;
 	for (contadorCARAS = 0; contadorCARAS < NUCA; contadorCARAS++){
 		glBegin(GL_POLYGON);
-		for (contadorVERTICES = 0; contadorVERTICES < NUCA; contadorVERTICES++){
-			glVertex3f(vertices[caras[contadorCARAS][0] - 1].x, vertices[caras[contadorCARAS][0] - 1].y, vertices[caras[contadorCARAS][0] - 1].z);
-			glVertex3f(vertices[caras[contadorCARAS][1] - 1].x, vertices[caras[contadorCARAS][1] - 1].y, vertices[caras[contadorCARAS][1] - 1].z);
-			glVertex3f(vertices[caras[contadorCARAS][2] - 1].x, vertices[caras[contadorCARAS][2] - 1].y, vertices[caras[contadorCARAS][2] - 1].z);
-			glVertex3f(vertices[caras[contadorCARAS][3] - 1].x, vertices[caras[contadorCARAS][3] - 1].y, vertices[caras[contadorCARAS][3] - 1].z);
+		for (contadorVERTICES = 0; contadorVERTICES < caras[contadorCARAS].vertice.size(); contadorVERTICES++){
+			caras[contadorCARAS].popVertice();
+			glVertex3f(vertices[caras[contadorCARAS].verticeFront].x, vertices[caras[contadorCARAS].verticeFront - 1].y, vertices[caras[contadorCARAS].verticeFront - 1].z);
 		}
 		glEnd();
 	}

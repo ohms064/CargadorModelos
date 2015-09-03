@@ -66,10 +66,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cara.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Vertices.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Cara.h" />
     <ClInclude Include="Vertices.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

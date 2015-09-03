@@ -21,9 +21,15 @@
     <ClCompile Include="Vertices.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Cara.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vertices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cara.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

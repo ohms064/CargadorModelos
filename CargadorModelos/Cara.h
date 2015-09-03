@@ -6,11 +6,14 @@ class Cara
 		std::queue<int> vertice;
 		std::queue<int> textura;
 		std::queue<int> normal;
+		int verticeFront;
+		int texturaFront;
+		int normalFront;
 		Cara();
-		void getCara(char* aspe);
-		int popVertice();
-		int popTextura();
-		int popNormal();
-	
+		void setCara(char* aspe);
+		void popVertice();
+		void popTextura();
+		void popNormal();
+		void printVertice();
 };
 
