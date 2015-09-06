@@ -1,4 +1,7 @@
 #pragma once
+#include <string>
+#include <iostream>
+using namespace std;
 class Vertices
 {
 	public:
@@ -9,6 +12,6 @@ class Vertices
 		Vertices();
 		void print();
 		void setAll(int i, int j, int k);
-		void setAll(char* buffer, char delimitadores[], char* contexto);
+		void setAll(string buffer);
 };
 

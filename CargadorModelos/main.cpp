@@ -40,53 +40,55 @@ Vertices vertices[NUVE];
 Cara caras[NUCA];
 
 int cargaObjeto(){
-	char linea[128];
-	ifstream fe("link.obj");
+	string linea;
+	ifstream fe("archivo.obj");
 	int contador_lineas = 0;
 	int contador_punto = 0;//Es el que lleva el conteo del número de punto que se va a dibujar
 	int contador_cara = 0;
-	while (fe.getline(linea, 128) && strcmp(linea, "")){
-		printf("LINEA NO %d:\n\t%s\n", contador_lineas++, linea);	//printf("%s\n", linea);
-		char delimitadores[] = " ";
-		char*  aspe;
-		char* contexto = NULL;
-		aspe = strtok_s(linea, delimitadores, &contexto); //aspe = Arreglo de Separaciones Por Espacios
+	size_t espacio;
+	while (!fe.eof()){
+		contador_lineas++;
+		getline(fe, linea);
+		espacio = linea.find(" ");
+		//printf("LINEA NO %d:\n\t%s\n", contador_lineas++, linea);	//printf("%s\n", linea);
+		cout << "Linea: " << contador_lineas << "\n\t" << linea << endl;
 
-		int contador_separaciones = 0;
-		if (!strcmp(aspe, "#")){
+		if (linea.substr(0, espacio) == "#"){
 			//printf("COMENTARIO: ");
-			aspe = strtok_s(NULL, delimitadores, &contexto);
 		}
-		else if (!strcmp(aspe, "mtllib") || !strcmp(aspe, "usemtl")){
+		else if (linea.substr(0, espacio) == "mtllib" || linea.substr(0, espacio) == "usemtl"){
 			//printf("MATERIALES: ");
-			aspe = strtok_s(NULL, delimitadores, &contexto);
 		}
-		else if (!strcmp(aspe, "v")){
+		else if (linea.substr(0, espacio) == "v"){
 			//Aquí se guardan las variables x,y,z del objeto vertices[]
-			vertices[contador_punto].setAll(aspe, delimitadores, contexto);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
+			linea.erase(0, linea.find(" ") + 1);
+			vertices[contador_punto].setAll(linea);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
 			vertices[contador_punto].print();
 			contador_punto++;
 		}
-		else if (!strcmp(aspe, "vt")){
+		else if (linea.substr(0, espacio) == "vt"){
 			//printf("TEXTURAS: ");
-			aspe = strtok_s(NULL, delimitadores, &contexto);
 		}
-		else if (!strcmp(aspe, "vn")){
+		else if (linea.substr(0, espacio) == "vn"){
 			//printf("NORMALES: ");
-			aspe = strtok_s(NULL, delimitadores, &contexto);
 		}
-		else if (!strcmp(aspe, "f")){
+		else if (linea.substr(0, espacio) == "s"){
+			//printf("NORMALES: ");
+		}
+		else if (linea.substr(0, espacio) == "f"){
 			//CARAS
-			aspe = strtok_s(NULL, delimitadores, &contexto);
-			while (aspe != NULL){
-				caras[contador_cara].setCara(aspe);
-				aspe = strtok_s(NULL, delimitadores, &contexto);
+			linea.erase(0, linea.find(" ") + 1);
+			size_t pos = linea.find(" ");
+			while ( pos != std::string::npos){//Mientras haya espacios dentro de la cadena
+				caras[contador_cara].setCara(linea.substr(0, pos));
+				linea.erase(0, linea.find(" ") + 1);
+				pos = linea.find(" ");
 			}
+			caras[contador_cara].setCara(linea);
 			contador_cara++;
 		}
 		else{
 			//printf("OTROS     : ");
-			aspe = strtok_s(NULL, delimitadores, &contexto);
 		}
 		printf("\n");
 	}

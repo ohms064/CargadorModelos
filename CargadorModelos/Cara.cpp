@@ -6,37 +6,27 @@
 Cara::Cara(){
 }
 
-void Cara::setCara(char* aspe){
+void Cara::setCara(string item){
 	//El formato de las caras es: v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ....
-	//Verifica como recibe el formato, ya sea v1, v1/vt1, v1/vt1/vn1 o v1//vn1
-	char* contexto = NULL;
-	printf("aspe: %s ", aspe);
-	if (strstr(aspe, "//")){ //Si solo contiene el vertice y la normal
-		char delimitador[] = "//";
-		char* c = strtok_s(aspe, delimitador, &contexto);
-		vertice.push(atoi(c) - 1);
-		c = strtok_s(NULL, delimitador, &contexto);
-		if (c != NULL)
-			normal.push(atoi(c));
-	}
-	else if (strstr(aspe, "/")){//Por lo menos tiene la textura
-		char delimitador[] = "/";
-		char* c = strtok_s(aspe, delimitador, &contexto);
-		printf("C: %c", c);
-		vertice.push(atoi(c) - 1);
-		c = strtok_s(NULL, delimitador, &contexto);
-		if (c != NULL){//Si tambien contiene la textura
-			textura.push(atoi(c));
-			c = strtok_s(NULL, delimitador, &contexto);
-			if (c != NULL){//Si también contiene la normal
-				normal.push(atoi(c));
+	size_t pos = item.find("/");
+	if (pos == string::npos)
+		vertice.push(stoi(item) - 1);
+	else{
+		vertice.push(stoi(item.substr(0, pos)));
+		item.erase(0, pos + 1);
+		pos = item.find("/");
+		if (pos != string::npos){
+			std::string temp = item.substr(0, pos);
+			if (!temp.empty()) //Checamos que no esté vacío
+				textura.push(stoi(temp));
+			item.erase(0, pos + 1);
+			pos = item.find("/");
+			if (pos != string::npos){
+				normal.push(stoi(item.substr(0, pos)));
+				item.erase(0, pos + 1);
 			}
 		}
 	}
-	else{
-		vertice.push(atoi(aspe) - 1);
-	}
-
 }
 
 void Cara::popVertice(){

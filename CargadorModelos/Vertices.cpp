@@ -1,5 +1,4 @@
 #include "Vertices.h"
-#include <iostream>
 
 
 Vertices::Vertices(){
@@ -9,7 +8,7 @@ Vertices::Vertices(){
 }
 
 void Vertices::print(){
-	printf("X: %f Y: %f Z %f\n", x, y, z);
+	printf("\t\tX: %f Y: %f Z %f\n", x, y, z);
 }
 
 void Vertices::setAll(int i, int j, int k){
@@ -18,12 +17,15 @@ void Vertices::setAll(int i, int j, int k){
 	z = k;
 }
 
-void Vertices::setAll(char* buffer, char delimitadores[], char* contexto){
+void Vertices::setAll(string buffer){
 	//Recibe una lista de tokens con los valores de x,y,z y se moviendo sobre la lista.
-	buffer = strtok_s(NULL, delimitadores, &contexto);
-	x = atof(buffer);
-	buffer = strtok_s(NULL, delimitadores, &contexto);
-	y = atof(buffer);
-	buffer = strtok_s(NULL, delimitadores, &contexto);
-	z = atof(buffer);
+	size_t pos = buffer.find(" ");
+	x = stoi(buffer.substr(0, pos));
+	buffer.erase(0, pos + 1);
+	pos = buffer.find(" ");
+	y = stoi(buffer.substr(0, pos));
+	buffer.erase(0, pos + 1);
+	pos = buffer.find(" ");
+	z = stoi(buffer.substr(0, pos));
+	buffer.erase(0, pos + 1);
 }

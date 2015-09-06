@@ -1,16 +1,19 @@
 #pragma once
 #include<queue>
+#include<string>
+#include <iostream>
+using namespace std;
 class Cara
 {
 	public:
-		std::queue<int> vertice;
-		std::queue<int> textura;
-		std::queue<int> normal;
+		queue<int> vertice;
+		queue<int> textura;
+		queue<int> normal;
 		int verticeFront;
 		int texturaFront;
 		int normalFront;
 		Cara();
-		void setCara(char* aspe);
+		void setCara(string item);
 		void popVertice();
 		void popTextura();
 		void popNormal();
