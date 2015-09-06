@@ -19,6 +19,7 @@ void Vertices::setAll(int i, int j, int k){
 }
 
 void Vertices::setAll(char* buffer, char delimitadores[], char* contexto){
+	//Recibe una lista de tokens con los valores de x,y,z y se moviendo sobre la lista.
 	buffer = strtok_s(NULL, delimitadores, &contexto);
 	x = atof(buffer);
 	buffer = strtok_s(NULL, delimitadores, &contexto);

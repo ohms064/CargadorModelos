@@ -62,6 +62,7 @@ int cargaObjeto(){
 			aspe = strtok_s(NULL, delimitadores, &contexto);
 		}
 		else if (!strcmp(aspe, "v")){
+			//Aquí se guardan las variables x,y,z del objeto vertices[]
 			vertices[contador_punto].setAll(aspe, delimitadores, contexto);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
 			vertices[contador_punto].print();
 			contador_punto++;
@@ -82,7 +83,7 @@ int cargaObjeto(){
 				aspe = strtok_s(NULL, delimitadores, &contexto);
 			}
 			contador_cara++;
-		}		
+		}
 		else{
 			//printf("OTROS     : ");
 			aspe = strtok_s(NULL, delimitadores, &contexto);
