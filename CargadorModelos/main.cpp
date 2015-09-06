@@ -67,11 +67,11 @@ int cargaObjeto(){
 		}
 		else if (!strcmp(aspe, "f")){
 			aspe = strtok_s(NULL, delimitadores, &contexto);
-			printf("Cara %d ", contador_cara);
+			printf("Cara %d\n", contador_cara);
 			while (aspe != NULL){
 				caras[contador_cara].setCara(aspe);
 				aspe = strtok_s(NULL, delimitadores, &contexto);
-				printf("Tam: %d", caras[contador_cara].vertice.size());
+				printf(" Tam: %d\n", caras[contador_cara].vertice.size());
 			}
 			caras[contador_cara].printVertice();
 			contador_cara++;
@@ -85,13 +85,19 @@ int cargaObjeto(){
 }
 void dibujaObjeto(){
 	int contadorCARAS = 0;
+	static int imprimir = 0;
 	int contadorVERTICES = 0;
 	for (contadorCARAS = 0; contadorCARAS < NUCA; contadorCARAS++){
 		glBegin(GL_POLYGON);
 		for (contadorVERTICES = 0; contadorVERTICES < caras[contadorCARAS].vertice.size(); contadorVERTICES++){
+			if (imprimir == 0){
+				printf("ContadorCaras: %d, cara: %d\n", contadorCARAS, caras[contadorCARAS].vertice.front());
+				caras[contadorCARAS].printVertice();
+			}
+			glVertex3f(vertices[caras[contadorCARAS].vertice.front()].x, vertices[caras[contadorCARAS].vertice.front()].y, vertices[caras[contadorCARAS].vertice.front()].z);
 			caras[contadorCARAS].popVertice();
-			glVertex3f(vertices[caras[contadorCARAS].verticeFront].x, vertices[caras[contadorCARAS].verticeFront - 1].y, vertices[caras[contadorCARAS].verticeFront - 1].z);
 		}
+		if (imprimir == 0) imprimir++;
 		glEnd();
 	}
 }

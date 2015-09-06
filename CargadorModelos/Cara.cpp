@@ -24,42 +24,35 @@ void Cara::setCara(char* aspe){
 			c = strtok_s(NULL, delimitador, &contexto);
 			if (c != NULL){//Si también contiene la normal
 				normal.push(atoi(c));
-				c = strtok_s(NULL, delimitador, &contexto);
 			}
 		}
 	}
 	else{
-		printf("Vertice: %d ", atoi(aspe) - 1);
+		printf("Ve: %d ", atoi(aspe) - 1);
 		vertice.push(atoi(aspe) - 1);
 	}
+
 }
 
 void Cara::popVertice(){
-	vertice.pop();
 	vertice.push(vertice.front());
-	verticeFront = vertice.front();
-	//printf("%d", vertice.front());
+	vertice.pop();
 }
 
 void Cara::popTextura(){
-	textura.pop();
 	textura.push(textura.front());
-	texturaFront = textura.front();
+	textura.pop();
 }
 
 void Cara::popNormal(){
-	normal.pop();
 	normal.push(normal.front());
-	normalFront = normal.front();
+	normal.pop();
 }
 
 void Cara::printVertice(){
-	popVertice();
-	printf("Caras: %d,", verticeFront);
-	popVertice();
-	printf("%d,", verticeFront);
-	popVertice();
-	printf("%d,", verticeFront);
-	popVertice();
-	printf("%d\n", verticeFront);
+	for (int i = 0; i < vertice.size(); i++){
+		printf("%d ", vertice.front());
+		popVertice();
+	}
+	printf("\n");
 }
