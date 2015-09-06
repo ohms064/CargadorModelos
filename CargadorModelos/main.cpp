@@ -9,8 +9,8 @@
 using namespace std;
 
 #define VELOCIDAD 2;
-#define NUVE 8
-#define NUCA 6
+#define NUVE 30
+#define NUCA 50
 
 GLfloat posObjeto = -5.0f;
 GLfloat anguloCamaraY = 0.0f;
@@ -41,12 +41,12 @@ Cara caras[NUCA];
 
 int cargaObjeto(){
 	char linea[128];
-	ifstream fe("archivo.obj");
+	ifstream fe("link.obj");
 	int contador_lineas = 0;
 	int contador_punto = 0;//Es el que lleva el conteo del número de punto que se va a dibujar
 	int contador_cara = 0;
 	while (fe.getline(linea, 128) && strcmp(linea, "")){
-		printf("LINEA NO %d:\n\t", contador_lineas++);	//printf("%s\n", linea);
+		printf("LINEA NO %d:\n\t%s\n", contador_lineas++, linea);	//printf("%s\n", linea);
 		char delimitadores[] = " ";
 		char*  aspe;
 		char* contexto = NULL;
@@ -63,41 +63,45 @@ int cargaObjeto(){
 		}
 		else if (!strcmp(aspe, "v")){
 			vertices[contador_punto].setAll(aspe, delimitadores, contexto);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
+			vertices[contador_punto].print();
 			contador_punto++;
 		}
-		else if (!strcmp(aspe, "f")){
+		else if (!strcmp(aspe, "vt")){
+			//printf("TEXTURAS: ");
 			aspe = strtok_s(NULL, delimitadores, &contexto);
-			printf("Cara %d\n", contador_cara);
+		}
+		else if (!strcmp(aspe, "vn")){
+			//printf("NORMALES: ");
+			aspe = strtok_s(NULL, delimitadores, &contexto);
+		}
+		else if (!strcmp(aspe, "f")){
+			//CARAS
+			aspe = strtok_s(NULL, delimitadores, &contexto);
 			while (aspe != NULL){
 				caras[contador_cara].setCara(aspe);
 				aspe = strtok_s(NULL, delimitadores, &contexto);
-				printf(" Tam: %d\n", caras[contador_cara].vertice.size());
 			}
-			caras[contador_cara].printVertice();
 			contador_cara++;
 		}		
 		else{
 			//printf("OTROS     : ");
+			aspe = strtok_s(NULL, delimitadores, &contexto);
 		}
 		printf("\n");
 	}
 	return 0;
 }
 void dibujaObjeto(){
+	//Es llamado dentro de display
 	int contadorCARAS = 0;
-	static int imprimir = 0;
 	int contadorVERTICES = 0;
 	for (contadorCARAS = 0; contadorCARAS < NUCA; contadorCARAS++){
 		glBegin(GL_POLYGON);
+		//Se empieza a dibujar los vertices con los datos guarado en la cola de vertices obtenida en cargaObjeto
 		for (contadorVERTICES = 0; contadorVERTICES < caras[contadorCARAS].vertice.size(); contadorVERTICES++){
-			if (imprimir == 0){
-				printf("ContadorCaras: %d, cara: %d\n", contadorCARAS, caras[contadorCARAS].vertice.front());
-				caras[contadorCARAS].printVertice();
-			}
 			glVertex3f(vertices[caras[contadorCARAS].vertice.front()].x, vertices[caras[contadorCARAS].vertice.front()].y, vertices[caras[contadorCARAS].vertice.front()].z);
 			caras[contadorCARAS].popVertice();
 		}
-		if (imprimir == 0) imprimir++;
 		glEnd();
 	}
 }

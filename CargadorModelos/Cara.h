@@ -15,5 +15,7 @@ class Cara
 		void popTextura();
 		void popNormal();
 		void printVertice();
+		void printTextura();
+		void printNormal();
 };
 
