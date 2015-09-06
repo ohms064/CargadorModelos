@@ -20,12 +20,16 @@ void Vertices::setAll(int i, int j, int k){
 void Vertices::setAll(string buffer){
 	//Recibe una lista de tokens con los valores de x,y,z y se moviendo sobre la lista.
 	size_t pos = buffer.find(" ");
-	x = stoi(buffer.substr(0, pos));
+	while (buffer.substr(0, pos).empty()){
+		buffer.erase(0, pos + 1);
+		pos = buffer.find(" ");
+	}
+	x = stof(buffer.substr(0, pos));
 	buffer.erase(0, pos + 1);
 	pos = buffer.find(" ");
-	y = stoi(buffer.substr(0, pos));
+	y = stof(buffer.substr(0, pos));
 	buffer.erase(0, pos + 1);
 	pos = buffer.find(" ");
-	z = stoi(buffer.substr(0, pos));
+	z = stof(buffer.substr(0, pos));
 	buffer.erase(0, pos + 1);
 }

@@ -13,7 +13,7 @@ class Cara
 		int texturaFront;
 		int normalFront;
 		Cara();
-		void setCara(string item);
+		void setCara(string input);
 		void popVertice();
 		void popTextura();
 		void popNormal();

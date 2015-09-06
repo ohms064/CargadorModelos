@@ -9,8 +9,8 @@
 using namespace std;
 
 #define VELOCIDAD 2;
-#define NUVE 30
-#define NUCA 50
+#define NUVE 1000
+#define NUCA 1000
 
 GLfloat posObjeto = -5.0f;
 GLfloat anguloCamaraY = 0.0f;
@@ -41,7 +41,7 @@ Cara caras[NUCA];
 
 int cargaObjeto(){
 	string linea;
-	ifstream fe("archivo.obj");
+	ifstream fe("monito2.obj");
 	int contador_lineas = 0;
 	int contador_punto = 0;//Es el que lleva el conteo del número de punto que se va a dibujar
 	int contador_cara = 0;
@@ -80,6 +80,7 @@ int cargaObjeto(){
 			linea.erase(0, linea.find(" ") + 1);
 			size_t pos = linea.find(" ");
 			while ( pos != std::string::npos){//Mientras haya espacios dentro de la cadena
+				cout << "Entrada: " << linea.substr(0, pos) << endl;
 				caras[contador_cara].setCara(linea.substr(0, pos));
 				linea.erase(0, linea.find(" ") + 1);
 				pos = linea.find(" ");
@@ -98,12 +99,35 @@ void dibujaObjeto(){
 	//Es llamado dentro de display
 	int contadorCARAS = 0;
 	int contadorVERTICES = 0;
+	static int imprime = 0;
+	float r = 0.0f;
+	float g = 0.0f;
+	float b = 0.1f;
 	for (contadorCARAS = 0; contadorCARAS < NUCA; contadorCARAS++){
+		glColor3d(r, g, b);
 		glBegin(GL_POLYGON);
 		//Se empieza a dibujar los vertices con los datos guarado en la cola de vertices obtenida en cargaObjeto
 		for (contadorVERTICES = 0; contadorVERTICES < caras[contadorCARAS].vertice.size(); contadorVERTICES++){
+			if (imprime < 7){
+				caras[contadorCARAS].printVertice();
+				cout << "\t";
+				vertices[caras[contadorCARAS].vertice.front()].print();
+			}
 			glVertex3f(vertices[caras[contadorCARAS].vertice.front()].x, vertices[caras[contadorCARAS].vertice.front()].y, vertices[caras[contadorCARAS].vertice.front()].z);
 			caras[contadorCARAS].popVertice();
+		}
+		
+		if (b == 1.0f){
+			if (g == 1.0f)
+				r += 0.2f;
+			else
+				g += 0.1f;
+		}else
+			b += 0.3f;
+	
+		if (imprime < 7){
+			cout << endl;
+			imprime++;
 		}
 		glEnd();
 	}
@@ -156,21 +180,7 @@ void display() {
 	glRotatef(anguloCamaraY, 0.0f, 1.0f, 0.0f);
 	// eje vertical.
 	glRotatef(anguloCamaraX, 1.0f, 0.0f, 0.0f);
-	//PISO
-	glPushMatrix();
-	glTranslatef(0.0f, -2.0f, 0.0f);
-	dibujoPiso();
-	glPopMatrix();
-	//REFERENCIA IZQUIERDA
-	glPushMatrix();
-	glTranslatef(-5.0f, 0.0f, 0.0f);
-	dibujaReferencia();
-	glPopMatrix();
-	//REFERENCIA DERECHA
-	glPushMatrix();
-	glTranslatef(5.0f, 0.0f, 0.0f);
-	dibujaReferencia();
-	glPopMatrix();
+	
 	//CUBO
 	glPushMatrix();
 	switch (color){

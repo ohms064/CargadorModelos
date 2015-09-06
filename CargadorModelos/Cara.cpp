@@ -6,13 +6,16 @@
 Cara::Cara(){
 }
 
-void Cara::setCara(string item){
+void Cara::setCara(const string input){
 	//El formato de las caras es: v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ....
+	string item = input;
 	size_t pos = item.find("/");
 	if (pos == string::npos)
 		vertice.push(stoi(item) - 1);
 	else{
-		vertice.push(stoi(item.substr(0, pos)));
+		int temp = stoi(item.substr(0, pos)) - 1;
+		cout << "temp: "<< temp;
+		vertice.push(temp);
 		item.erase(0, pos + 1);
 		pos = item.find("/");
 		if (pos != string::npos){
