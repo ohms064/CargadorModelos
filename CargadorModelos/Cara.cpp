@@ -18,13 +18,13 @@ void Cara::setCara(const string input){
 		vertice.push(temp);
 		item.erase(0, pos + 1);
 		pos = item.find("/");
-		if (pos != string::npos){
+		if (pos != string::npos){// Si no encuentra otra "/" entonces termina
 			std::string temp = item.substr(0, pos);
-			if (!temp.empty()) //Checamos que no esté vacío
+			if (!temp.empty()) //Checamos que no esté vacío por si llegara a ser que fuera v1//vn1
 				textura.push(stoi(temp));
 			item.erase(0, pos + 1);
 			pos = item.find("/");
-			if (pos != string::npos){
+			if (pos != string::npos){//Checamos si exite vn
 				normal.push(stoi(item.substr(0, pos)));
 				item.erase(0, pos + 1);
 			}
@@ -32,6 +32,7 @@ void Cara::setCara(const string input){
 	}
 }
 
+//Esto se maneja como una cola circular, el HEAD estaría apuntando al principio, cuando le haceoms pop lo reingresamos a la cola.
 void Cara::popVertice(){
 	vertice.push(vertice.front());
 	vertice.pop();

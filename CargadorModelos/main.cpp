@@ -9,8 +9,12 @@
 using namespace std;
 
 #define VELOCIDAD 2;
-#define NUVE 1000
-#define NUCA 1000
+#define NUVE 20000 //Tamaño del arreglo de vertices
+#define NUCA 20000 //Tamaño del arreglo de caras
+
+// Poner aquí el nombre del archivo sin el .obj
+#define NOMBRE_ARCHIVO "monito2"
+//---------------------------------
 
 GLfloat posObjeto = -5.0f;
 GLfloat anguloCamaraY = 0.0f;
@@ -36,52 +40,52 @@ float upCamPieX = 0;
 float upCamPieY = 1;
 float upCamPieZ = 0;
 
-Vertices vertices[NUVE];
-Cara caras[NUCA];
+Vertices vertices[NUVE]; //Guardamos los valores x,y,z de cada vertice (v x y z)
+Cara caras[NUCA]; //Guardamos los valores de vertices, textura y normal de cada cara, textura y normal son opcionales (f v/vt/vn)
 
 int cargaObjeto(){
 	string linea;
-	ifstream fe("monito2.obj");
+	ifstream fe(NOMBRE_ARCHIVO".obj");
 	int contador_lineas = 0;
-	int contador_punto = 0;//Es el que lleva el conteo del número de punto que se va a dibujar
+	int contador_punto = 0;//Es el que lleva el conteo del número de puntos que se va a dibujar
 	int contador_cara = 0;
 	size_t espacio;
+	string id;
 	while (!fe.eof()){
 		contador_lineas++;
 		getline(fe, linea);
-		espacio = linea.find(" ");
 		//printf("LINEA NO %d:\n\t%s\n", contador_lineas++, linea);	//printf("%s\n", linea);
 		cout << "Linea: " << contador_lineas << "\n\t" << linea << endl;
-
-		if (linea.substr(0, espacio) == "#"){
+		espacio = linea.find(" ");
+		id = linea.substr(0, espacio); //Aquí tenemos el inicio de cada linea que nos indicará que hacer
+		linea.erase(0, linea.find(" ") + 1); //Borramos el identificador de la linea para trabajar sólo con los datos.
+		if (id == "#"){
 			//printf("COMENTARIO: ");
 		}
-		else if (linea.substr(0, espacio) == "mtllib" || linea.substr(0, espacio) == "usemtl"){
+		else if (id == "mtllib" || id == "usemtl"){
 			//printf("MATERIALES: ");
 		}
-		else if (linea.substr(0, espacio) == "v"){
+		else if (id == "v"){
 			//Aquí se guardan las variables x,y,z del objeto vertices[]
-			linea.erase(0, linea.find(" ") + 1);
 			vertices[contador_punto].setAll(linea);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
 			vertices[contador_punto].print();
 			contador_punto++;
 		}
-		else if (linea.substr(0, espacio) == "vt"){
+		else if (id == "vt"){
 			//printf("TEXTURAS: ");
 		}
-		else if (linea.substr(0, espacio) == "vn"){
+		else if (id == "vn"){
 			//printf("NORMALES: ");
 		}
-		else if (linea.substr(0, espacio) == "s"){
+		else if (id == "s"){
 			//printf("NORMALES: ");
 		}
-		else if (linea.substr(0, espacio) == "f"){
+		else if (id == "f"){
 			//CARAS
-			linea.erase(0, linea.find(" ") + 1);
 			size_t pos = linea.find(" ");
-			while ( pos != std::string::npos){//Mientras haya espacios dentro de la cadena
+			while ( pos != std::string::npos){//Mientras haya espacios dentro de la cadena, esto significa que hay más de un vértice que guardar.
 				cout << "Entrada: " << linea.substr(0, pos) << endl;
-				caras[contador_cara].setCara(linea.substr(0, pos));
+				caras[contador_cara].setCara(linea.substr(0, pos));//Aquí mismo se guarda vértice/textura/normal
 				linea.erase(0, linea.find(" ") + 1);
 				pos = linea.find(" ");
 			}
@@ -100,34 +104,12 @@ void dibujaObjeto(){
 	int contadorCARAS = 0;
 	int contadorVERTICES = 0;
 	static int imprime = 0;
-	float r = 0.0f;
-	float g = 0.0f;
-	float b = 0.1f;
 	for (contadorCARAS = 0; contadorCARAS < NUCA; contadorCARAS++){
-		glColor3d(r, g, b);
 		glBegin(GL_POLYGON);
-		//Se empieza a dibujar los vertices con los datos guarado en la cola de vertices obtenida en cargaObjeto
+		//Se empieza a dibujar las caras con los datos guarado en el arreglo "vertices" obtenida en cargaObjeto
 		for (contadorVERTICES = 0; contadorVERTICES < caras[contadorCARAS].vertice.size(); contadorVERTICES++){
-			if (imprime < 7){
-				caras[contadorCARAS].printVertice();
-				cout << "\t";
-				vertices[caras[contadorCARAS].vertice.front()].print();
-			}
 			glVertex3f(vertices[caras[contadorCARAS].vertice.front()].x, vertices[caras[contadorCARAS].vertice.front()].y, vertices[caras[contadorCARAS].vertice.front()].z);
 			caras[contadorCARAS].popVertice();
-		}
-		
-		if (b == 1.0f){
-			if (g == 1.0f)
-				r += 0.2f;
-			else
-				g += 0.1f;
-		}else
-			b += 0.3f;
-	
-		if (imprime < 7){
-			cout << endl;
-			imprime++;
 		}
 		glEnd();
 	}
@@ -284,7 +266,7 @@ int main(int argc, char **argv){
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(600, 600);
-	glutCreateWindow("Cubo");
+	glutCreateWindow(NOMBRE_ARCHIVO);
 	init();
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
