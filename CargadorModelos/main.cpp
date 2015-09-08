@@ -2,6 +2,7 @@
 #include < GL/glut.h>
 #include < stdio.h>
 #include "Vertices.h"
+#include "Texturas.h"
 #include "Cara.h"
 #include <iostream>
 #include <fstream>
@@ -10,10 +11,11 @@ using namespace std;
 
 #define VELOCIDAD 2;
 #define NUVE 20000 //Tamaño del arreglo de vertices
+#define NUTE 20000 //Tamaño del arreglo de texturas
 #define NUCA 20000 //Tamaño del arreglo de caras
 
 // Poner aquí el nombre del archivo sin el .obj
-#define NOMBRE_ARCHIVO "monito2"
+#define NOMBRE_ARCHIVO "archivo"
 //---------------------------------
 
 GLfloat posObjeto = -5.0f;
@@ -41,6 +43,7 @@ float upCamPieY = 1;
 float upCamPieZ = 0;
 
 Vertices vertices[NUVE]; //Guardamos los valores x,y,z de cada vertice (v x y z)
+Texturas texturas[NUTE]; //Guardamos los valores x,y,z de cada vertice (v x y z)
 Cara caras[NUCA]; //Guardamos los valores de vertices, textura y normal de cada cara, textura y normal son opcionales (f v/vt/vn)
 
 int cargaObjeto(){
@@ -48,6 +51,7 @@ int cargaObjeto(){
 	ifstream fe(NOMBRE_ARCHIVO".obj");
 	int contador_lineas = 0;
 	int contador_punto = 0;//Es el que lleva el conteo del número de puntos que se va a dibujar
+	int contador_texturas = 0;//Es el que lleva el conteo del número de puntos que se va a dibujar
 	int contador_cara = 0;
 	size_t espacio;
 	string id;
@@ -73,6 +77,10 @@ int cargaObjeto(){
 		}
 		else if (id == "vt"){
 			//printf("TEXTURAS: ");
+			//Aquí se guardan las variables x,y del objeto texturas[]
+			texturas[contador_texturas].setAll(linea);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
+			texturas[contador_texturas].print();
+			contador_texturas++;
 		}
 		else if (id == "vn"){
 			//printf("NORMALES: ");
@@ -108,7 +116,7 @@ void dibujaObjeto(){
 		glBegin(GL_POLYGON);
 		//Se empieza a dibujar las caras con los datos guarado en el arreglo "vertices" obtenida en cargaObjeto
 		for (contadorVERTICES = 0; contadorVERTICES < caras[contadorCARAS].vertice.size(); contadorVERTICES++){
-			glVertex3f(vertices[caras[contadorCARAS].vertice.front()].x, vertices[caras[contadorCARAS].vertice.front()].y, vertices[caras[contadorCARAS].vertice.front()].z);
+			glTexCoord2f(texturas[caras[contadorCARAS].textura.front()].x, texturas[caras[contadorCARAS].textura.front()].y); glVertex3f(vertices[caras[contadorCARAS].vertice.front()].x, vertices[caras[contadorCARAS].vertice.front()].y, vertices[caras[contadorCARAS].vertice.front()].z);
 			caras[contadorCARAS].popVertice();
 		}
 		glEnd();
