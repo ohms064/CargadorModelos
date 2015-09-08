@@ -1,9 +1,10 @@
 #include < stdlib.h>
 #include < GL/glut.h>
 #include < stdio.h>
-#include "Vertices.h"
-#include "Texturas.h"
 #include "Vertice.h"
+
+#include "Texturas.h"
+#include "texture.h"
 #include "Cara.h"
 #include <iostream>
 #include <fstream>
@@ -20,6 +21,7 @@ using namespace std;
 //prueba 1, nomás para ver cómo cambia
 //---------------------------------
 
+CTexture tCubo;
 GLfloat posObjeto = -5.0f;
 GLfloat anguloCamaraY = 0.0f;
 GLfloat anguloCamaraX = 0.0f;
@@ -45,6 +47,8 @@ float upCamPieY = 1;
 float upCamPieZ = 0;
 
 Vertice* vertices; //Guardamos los valores x,y,z de cada vertice (v x y z)
+Texturas texturas[14];  //Guardamos los valores x,y de cada vertice (vt x y)
+
 Cara* caras; //Guardamos los valores de vertices, textura y normal de cada cara, textura y normal son opcionales (f v/vt/vn)
 int contadorVertices = 0;
 int contadorCaras = 0;
@@ -109,13 +113,13 @@ int cargaObjeto(){
 		else if (id == "v"){
 			//Aquí se guardan las variables x,y,z del objeto vertices[]
 			vertices[contador_punto].setAll(linea);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
+			//vertices[contador_punto].print();
 			contador_punto++;
 		}
 		else if (id == "vt"){
-			//printf("TEXTURAS: ");
 			//Aquí se guardan las variables x,y del objeto texturas[]
-			texturas[contador_texturas].setAll(linea);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
-			texturas[contador_texturas].print();
+ 			texturas[contador_texturas].setAll(linea);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
+			//texturas[contador_texturas].print();
 			contador_texturas++;
 		}
 		else if (id == "vn"){
@@ -148,11 +152,14 @@ void dibujaObjeto(){
 	int contadorVERTICES = 0;
 	static int imprime = 0;
 	for (contadorCARAS = 0; contadorCARAS < contadorCaras; contadorCARAS++){
+		glBindTexture(GL_TEXTURE_2D, tCubo.GLindex);
 		glBegin(GL_POLYGON);
 		//Se empieza a dibujar las caras con los datos guarado en el arreglo "vertices" obtenida en cargaObjeto
 		for (contadorVERTICES = 0; contadorVERTICES < caras[contadorCARAS].vertice.size(); contadorVERTICES++){
-			glTexCoord2f(texturas[caras[contadorCARAS].textura.front()].x, texturas[caras[contadorCARAS].textura.front()].y); glVertex3f(vertices[caras[contadorCARAS].vertice.front()].x, vertices[caras[contadorCARAS].vertice.front()].y, vertices[caras[contadorCARAS].vertice.front()].z);
+			glTexCoord2f(texturas[caras[contadorCARAS].textura.front()].x, texturas[caras[contadorCARAS].textura.front()].y);
+			glVertex3f(vertices[caras[contadorCARAS].vertice.front()].x, vertices[caras[contadorCARAS].vertice.front()].y, vertices[caras[contadorCARAS].vertice.front()].z);
 			caras[contadorCARAS].popVertice();
+			caras[contadorCARAS].popTextura();
 		}
 		glEnd();
 	}
@@ -232,6 +239,12 @@ void display() {
 void init() {
 	glClearColor(0, 0, 0, 0);
 	glEnable(GL_DEPTH_TEST);
+
+	glEnable(GL_TEXTURE_2D);
+	tCubo.LoadBMP("cube.bmp");
+	tCubo.BuildGLTexture();
+	tCubo.ReleaseImage();
+
 	//CARGAR OBJ
 	cargaObjeto();
 	//CARGAR OBJ

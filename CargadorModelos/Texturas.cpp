@@ -8,7 +8,7 @@ Texturas::Texturas(){
 }
 
 void Texturas::print(){
-	printf("\t\tX: %f Y: %f Z %f\n", x, y);
+	printf("\t\tX: %f Y: %f\n", x, y);
 }
 
 void Texturas::setAll(int i, int j){
