@@ -153,10 +153,11 @@ void dibujaObjeto(){
 	static int imprime = 0;
 	for (contadorCARAS = 0; contadorCARAS < contadorCaras; contadorCARAS++){
 		glBindTexture(GL_TEXTURE_2D, tCubo.GLindex);
+		//glNormal3f(normales[caras[contadorCARAS].normal.front()].x, normales[caras[contadorCARAS].normal.front()].y, normales[caras[contadorCARAS].normal.front()].z);
 		glBegin(GL_POLYGON);
 		//Se empieza a dibujar las caras con los datos guarado en el arreglo "vertices" obtenida en cargaObjeto
 		for (contadorVERTICES = 0; contadorVERTICES < caras[contadorCARAS].vertice.size(); contadorVERTICES++){
-			glTexCoord2f(texturas[caras[contadorCARAS].textura.front()].x, texturas[caras[contadorCARAS].textura.front()].y);
+			glTexCoord2f(texturas[caras[contadorCARAS].textura.front()-1].x, texturas[caras[contadorCARAS].textura.front()-1].y);
 			glVertex3f(vertices[caras[contadorCARAS].vertice.front()].x, vertices[caras[contadorCARAS].vertice.front()].y, vertices[caras[contadorCARAS].vertice.front()].z);
 			caras[contadorCARAS].popVertice();
 			caras[contadorCARAS].popTextura();

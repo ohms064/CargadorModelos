@@ -82,12 +82,15 @@ bool CTexture::LoadBMP(char* filename)
     unsigned short int planes;          // number of planes in image (must be 1)     
     char temp;                          // temporary color storage for bgr-rgb conversion.
 
+	fopen_s(&file, filename, "rb");
+	/*
     // make sure the file is there.
     if ((fopen_s(&file, filename, "rb"))==NULL)
     {
 	printf("File Not Found : %s\n",filename);
 	return 0;
     }
+	*/
     
     // seek through the bmp header, up to the width/height:
     fseek(file, 18, SEEK_CUR);
