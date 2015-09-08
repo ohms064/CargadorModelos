@@ -17,6 +17,7 @@ using namespace std;
 
 // Poner aquí el nombre del archivo sin el .obj
 #define NOMBRE_ARCHIVO "archivo"
+//prueba 1, nomás para ver cómo cambia
 //---------------------------------
 
 GLfloat posObjeto = -5.0f;
