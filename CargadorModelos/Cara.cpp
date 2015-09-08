@@ -14,7 +14,6 @@ void Cara::setCara(const string input){
 		vertice.push(stoi(item) - 1);
 	else{
 		int temp = stoi(item.substr(0, pos)) - 1;
-		cout << "temp: "<< temp;
 		vertice.push(temp);
 		item.erase(0, pos + 1);
 		pos = item.find("/");

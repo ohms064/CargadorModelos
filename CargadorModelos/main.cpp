@@ -3,6 +3,7 @@
 #include < stdio.h>
 #include "Vertices.h"
 #include "Texturas.h"
+#include "Vertice.h"
 #include "Cara.h"
 #include <iostream>
 #include <fstream>
@@ -42,11 +43,47 @@ float upCamPieX = 0;
 float upCamPieY = 1;
 float upCamPieZ = 0;
 
-Vertices vertices[NUVE]; //Guardamos los valores x,y,z de cada vertice (v x y z)
-Texturas texturas[NUTE]; //Guardamos los valores x,y,z de cada vertice (v x y z)
-Cara caras[NUCA]; //Guardamos los valores de vertices, textura y normal de cada cara, textura y normal son opcionales (f v/vt/vn)
+Vertice* vertices; //Guardamos los valores x,y,z de cada vertice (v x y z)
+Cara* caras; //Guardamos los valores de vertices, textura y normal de cada cara, textura y normal son opcionales (f v/vt/vn)
+int contadorVertices = 0;
+int contadorCaras = 0;
+
+void cuentaID(){
+	string linea;
+	ifstream fe(NOMBRE_ARCHIVO".obj");
+	size_t espacio;
+	string id;
+	cout << "CuentaID" << endl;
+	while (!fe.eof()){
+		getline(fe, linea);
+		espacio = linea.find(" ");
+		id = linea.substr(0, espacio); //Aquí tenemos el inicio de cada linea que nos indicará que hacer
+		if (!linea.empty())
+		if (id == "v"){
+			contadorVertices++;
+		}
+		else if (id == "vt"){
+			//printf("TEXTURAS: ");
+		}
+		else if (id == "vn"){
+			//printf("NORMALES: ");
+		}
+		else if (id == "s"){
+			//printf("NORMALES: ");
+		}
+		else if (id == "f"){
+			//CARAS
+			contadorCaras++;
+		}
+	}
+	cout << "\tVertices: " << contadorVertices << " Caras: " << contadorCaras << endl;
+	vertices = new Vertice[contadorVertices];
+	caras = new Cara[contadorCaras];
+}
 
 int cargaObjeto(){
+	cuentaID();
+	cout << "Obteniendo vertices y caras" << endl;
 	string linea;
 	ifstream fe(NOMBRE_ARCHIVO".obj");
 	int contador_lineas = 0;
@@ -59,7 +96,6 @@ int cargaObjeto(){
 		contador_lineas++;
 		getline(fe, linea);
 		//printf("LINEA NO %d:\n\t%s\n", contador_lineas++, linea);	//printf("%s\n", linea);
-		cout << "Linea: " << contador_lineas << "\n\t" << linea << endl;
 		espacio = linea.find(" ");
 		id = linea.substr(0, espacio); //Aquí tenemos el inicio de cada linea que nos indicará que hacer
 		linea.erase(0, linea.find(" ") + 1); //Borramos el identificador de la linea para trabajar sólo con los datos.
@@ -72,7 +108,6 @@ int cargaObjeto(){
 		else if (id == "v"){
 			//Aquí se guardan las variables x,y,z del objeto vertices[]
 			vertices[contador_punto].setAll(linea);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
-			vertices[contador_punto].print();
 			contador_punto++;
 		}
 		else if (id == "vt"){
@@ -92,7 +127,6 @@ int cargaObjeto(){
 			//CARAS
 			size_t pos = linea.find(" ");
 			while ( pos != std::string::npos){//Mientras haya espacios dentro de la cadena, esto significa que hay más de un vértice que guardar.
-				cout << "Entrada: " << linea.substr(0, pos) << endl;
 				caras[contador_cara].setCara(linea.substr(0, pos));//Aquí mismo se guarda vértice/textura/normal
 				linea.erase(0, linea.find(" ") + 1);
 				pos = linea.find(" ");
@@ -103,8 +137,8 @@ int cargaObjeto(){
 		else{
 			//printf("OTROS     : ");
 		}
-		printf("\n");
 	}
+	cout << "Dibujando objeto" << endl;
 	return 0;
 }
 void dibujaObjeto(){
@@ -112,7 +146,7 @@ void dibujaObjeto(){
 	int contadorCARAS = 0;
 	int contadorVERTICES = 0;
 	static int imprime = 0;
-	for (contadorCARAS = 0; contadorCARAS < NUCA; contadorCARAS++){
+	for (contadorCARAS = 0; contadorCARAS < contadorCaras; contadorCARAS++){
 		glBegin(GL_POLYGON);
 		//Se empieza a dibujar las caras con los datos guarado en el arreglo "vertices" obtenida en cargaObjeto
 		for (contadorVERTICES = 0; contadorVERTICES < caras[contadorCARAS].vertice.size(); contadorVERTICES++){
@@ -122,6 +156,8 @@ void dibujaObjeto(){
 		glEnd();
 	}
 }
+
+
 void reshape(int width, int height) {
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
