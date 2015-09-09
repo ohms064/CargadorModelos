@@ -2,8 +2,9 @@
 #include < GL/glut.h>
 #include < stdio.h>
 #include "Vertice.h"
-
 #include "Texturas.h"
+#include "Normal.h"
+
 #include "texture.h"
 #include "Cara.h"
 #include <iostream>
@@ -47,11 +48,14 @@ float upCamPieY = 1;
 float upCamPieZ = 0;
 
 Vertice* vertices; //Guardamos los valores x,y,z de cada vertice (v x y z)
-Texturas texturas[14];  //Guardamos los valores x,y de cada vertice (vt x y)
+Texturas* texturas;  //Guardamos los valores x,y de cada vertice (vt x y)
+Normal* normales;  //Guardamos los valores x,y de cada vertice (vn x y z)
 
 Cara* caras; //Guardamos los valores de vertices, textura y normal de cada cara, textura y normal son opcionales (f v/vt/vn)
 int contadorVertices = 0;
 int contadorCaras = 0;
+int contadorNormales = 0;
+int contadorTexturas = 0;
 
 void cuentaID(){
 	string linea;
@@ -69,9 +73,11 @@ void cuentaID(){
 		}
 		else if (id == "vt"){
 			//printf("TEXTURAS: ");
+			contadorTexturas++;
 		}
 		else if (id == "vn"){
 			//printf("NORMALES: ");
+			contadorNormales++;
 		}
 		else if (id == "s"){
 			//printf("NORMALES: ");
@@ -83,6 +89,8 @@ void cuentaID(){
 	}
 	cout << "\tVertices: " << contadorVertices << " Caras: " << contadorCaras << endl;
 	vertices = new Vertice[contadorVertices];
+	texturas = new Texturas[contadorTexturas];
+	normales = new Normal[contadorNormales];
 	caras = new Cara[contadorCaras];
 }
 
@@ -94,6 +102,7 @@ int cargaObjeto(){
 	int contador_lineas = 0;
 	int contador_punto = 0;//Es el que lleva el conteo del número de puntos que se va a dibujar
 	int contador_texturas = 0;//Es el que lleva el conteo del número de puntos que se va a dibujar
+	int contador_normales = 0;//Es el que lleva el conteo del número de puntos que se va a dibujar
 	int contador_cara = 0;
 	size_t espacio;
 	string id;
@@ -123,7 +132,10 @@ int cargaObjeto(){
 			contador_texturas++;
 		}
 		else if (id == "vn"){
-			//printf("NORMALES: ");
+			//Aquí se guardan las variables x,y del objeto texturas[]
+			normales[contador_normales].setAll(linea);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
+			//normales[contador_normales].print();
+			contador_normales++;
 		}
 		else if (id == "s"){
 			//printf("NORMALES: ");
@@ -153,14 +165,22 @@ void dibujaObjeto(){
 	static int imprime = 0;
 	for (contadorCARAS = 0; contadorCARAS < contadorCaras; contadorCARAS++){
 		glBindTexture(GL_TEXTURE_2D, tCubo.GLindex);
-		//glNormal3f(normales[caras[contadorCARAS].normal.front()].x, normales[caras[contadorCARAS].normal.front()].y, normales[caras[contadorCARAS].normal.front()].z);
-		glBegin(GL_POLYGON);
+		glBegin(GL_POLYGON); 
+			
+			//printf("Normales");
 		//Se empieza a dibujar las caras con los datos guarado en el arreglo "vertices" obtenida en cargaObjeto
 		for (contadorVERTICES = 0; contadorVERTICES < caras[contadorCARAS].vertice.size(); contadorVERTICES++){
-			glTexCoord2f(texturas[caras[contadorCARAS].textura.front()-1].x, texturas[caras[contadorCARAS].textura.front()-1].y);
+			//glNormal3f(normales[caras[contadorCARAS].normal.front()].x, normales[caras[contadorCARAS].normal.front()].y, normales[caras[contadorCARAS].normal.front()].z);
+			glTexCoord2f(texturas[caras[contadorCARAS].textura.front() - 1].x, texturas[caras[contadorCARAS].textura.front() - 1].y);
 			glVertex3f(vertices[caras[contadorCARAS].vertice.front()].x, vertices[caras[contadorCARAS].vertice.front()].y, vertices[caras[contadorCARAS].vertice.front()].z);
+
+			//printf("NORMALES#%d: %f, $f, %f\n", contadorCARAS, normales[caras[contadorCARAS].normal.front()].x, normales[caras[contadorCARAS].normal.front()].y, normales[caras[contadorCARAS].normal.front()].z);
+			printf("TEXTURAS#%d: %f, %f\n", contadorCARAS, texturas[caras[contadorCARAS].textura.front() - 1].x, texturas[caras[contadorCARAS].textura.front() - 1].y);
+			printf("VÉRTICE#%d: %f, %f, %f\n\n", contadorCARAS, vertices[caras[contadorCARAS].vertice.front()].x, vertices[caras[contadorCARAS].vertice.front()].y, vertices[caras[contadorCARAS].vertice.front()].z);
+
 			caras[contadorCARAS].popVertice();
 			caras[contadorCARAS].popTextura();
+			//caras[contadorCARAS].popNormal();
 		}
 		glEnd();
 	}

@@ -30,18 +30,24 @@
     <ClCompile Include="Texturas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Normal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cara.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Texturas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vertice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Normal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texturas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
