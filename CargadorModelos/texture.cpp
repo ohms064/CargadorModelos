@@ -1,3 +1,6 @@
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 #include "texture.h"
 
 bool CTexture::LoadTGA(char *filename)			// Loads A TGA File Into Memory
@@ -11,8 +14,7 @@ bool CTexture::LoadTGA(char *filename)			// Loads A TGA File Into Memory
 
 
 	FILE *file; 
-	fopen_s(&file, filename, "rb");				// Open The TGA File
-
+	file = fopen(filename, "rb");				// Open The TGA File
 	if(	file==NULL ||										// Does File Even Exist?
 		fread(TGAcompare,1,sizeof(TGAcompare),file)!=sizeof(TGAcompare) ||	// Are There 12 Bytes To Read?
 		memcmp(TGAheader,TGAcompare,sizeof(TGAheader))!=0				||	// Does The Header Match What We Want?
@@ -82,15 +84,15 @@ bool CTexture::LoadBMP(char* filename)
     unsigned short int planes;          // number of planes in image (must be 1)     
     char temp;                          // temporary color storage for bgr-rgb conversion.
 
-	fopen_s(&file, filename, "rb");
-	/*
+	file = fopen(filename, "rb");
+	
     // make sure the file is there.
-    if ((fopen_s(&file, filename, "rb"))==NULL)
+    if (file==NULL)
     {
 	printf("File Not Found : %s\n",filename);
 	return 0;
     }
-	*/
+	
     
     // seek through the bmp header, up to the width/height:
     fseek(file, 18, SEEK_CUR);

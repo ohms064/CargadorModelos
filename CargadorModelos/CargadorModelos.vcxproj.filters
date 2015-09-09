@@ -33,6 +33,9 @@
     <ClCompile Include="Normal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Grupo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cara.h">
@@ -48,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Texturas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Grupo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

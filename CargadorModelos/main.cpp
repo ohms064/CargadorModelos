@@ -1,10 +1,13 @@
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 #include < stdlib.h>
 #include < GL/glut.h>
 #include < stdio.h>
 #include "Vertice.h"
 #include "Texturas.h"
 #include "Normal.h"
-
+#include "Grupo.h"
 #include "texture.h"
 #include "Cara.h"
 #include <iostream>
@@ -12,10 +15,10 @@
 #include <string>
 using namespace std;
 
-#define VELOCIDAD 2;
+#define VELOCIDAD 5;
 
 // Poner aquí el nombre del archivo sin el .obj, es muy importante que el archivo exista
-#define NOMBRE_ARCHIVO "archivo"
+#define NOMBRE_ARCHIVO "link"
 //---------------------------------
 
 CTexture tCubo;
@@ -46,12 +49,19 @@ float upCamPieZ = 0;
 Vertice* vertices; //Guardamos los valores x,y,z de cada vertice (v x y z)
 Texturas* texturas;  //Guardamos los valores x,y de cada vertice (vt x y)
 Normal* normales;  //Guardamos los valores x,y de cada vertice (vn x y z)
-
 Cara* caras; //Guardamos los valores de vertices, textura y normal de cada cara, textura y normal son opcionales (f v/vt/vn)
-int contadorVertices = 0;
-int contadorCaras = 0;
-int contadorNormales = 0;
-int contadorTexturas = 0;
+Grupo* grupos;
+
+int numVertices = 0;
+int numCaras = 0;
+int numNormales = 0;
+int numTexturas = 0;
+int numGrupos = 0;
+int numMtl = 0;
+
+bool banderaTextura = false;
+bool banderaNormal = false;
+bool banderaMtl = false;
 
 void cuentaID(){
 	string linea;
@@ -65,30 +75,41 @@ void cuentaID(){
 		id = linea.substr(0, espacio); //Aquí tenemos el inicio de cada linea que nos indicará que hacer
 		if (!linea.empty()){
 			if (id == "v"){
-				contadorVertices++;
+				numVertices++;
 			}
 			else if (id == "vt"){
 				//printf("TEXTURAS: ");
-				contadorTexturas++;
+				numTexturas++;
 			}
 			else if (id == "vn"){
 				//printf("NORMALES: ");
-				contadorNormales++;
+				numNormales++;
 			}
 			else if (id == "s"){
 				//printf("NORMALES: ");
 			}
 			else if (id == "f"){
 				//CARAS
-				contadorCaras++;
+				numCaras++;
+			}
+			else if (id == "g"){
+				//Grupos
+				numGrupos++;
+			}
+			else if (id == "usemtl"){
+				//Grupos
+				numMtl++;
 			}
 		}
 	}
-	cout << "\tVertices: " << contadorVertices << " Caras: " << contadorCaras << "Texturas: " << contadorTexturas << endl;
-	vertices = new Vertice[contadorVertices];
-	texturas = new Texturas[contadorTexturas];
-	normales = new Normal[contadorNormales];
-	caras = new Cara[contadorCaras];
+	cout << "\tVertices: " << numVertices << " Caras: " << numCaras << " Texturas: " << numTexturas << endl;
+	cout << "\tGrupos: " << numGrupos << "mtl: " << numMtl << endl;
+	vertices = new Vertice[numVertices];
+	texturas = new Texturas[numTexturas];
+	normales = new Normal[numNormales];
+	caras = new Cara[numCaras];
+	if(numGrupos == 0) grupos = new Grupo[numMtl];//Sólo se usará si no existen grupos.
+	else grupos = new Grupo[numGrupos + 5];
 }
 
 int cargaObjeto(){
@@ -101,6 +122,8 @@ int cargaObjeto(){
 	int contador_texturas = 0;//Es el que lleva el conteo del número de puntos que se va a dibujar
 	int contador_normales = 0;//Es el que lleva el conteo del número de puntos que se va a dibujar
 	int contador_cara = 0;
+	int contador_grupos = 0;
+	int contador_mtl = 0;
 	size_t espacio;
 	string id;
 	while (!fe.eof()){
@@ -113,8 +136,19 @@ int cargaObjeto(){
 		if (id == "#"){
 			//printf("COMENTARIO: ");
 		}
-		else if (id == "mtllib" || id == "usemtl"){
+		else if (id == "mtllib"){
 			//printf("MATERIALES: ");
+
+		}
+		else if (id == "usemtl"){
+			if (contador_mtl == 26) system("pause");
+			if (numGrupos != 0) grupos[contador_grupos].tex = linea; //Creamos la textura dentro de la variable tex de Grupos para futuro bind
+			else { 
+				if (contador_mtl == 0) grupos[0].inicio = 0;
+				else grupos[contador_mtl].inicio = contador_cara + 1;
+				grupos[contador_mtl].tex = linea; //Creamos la textura dentro de la variable tex de Grupos para futuro bind
+				contador_mtl++;
+			}	
 		}
 		else if (id == "v"){
 			//Aquí se guardan las variables x,y,z del objeto vertices[]
@@ -148,6 +182,13 @@ int cargaObjeto(){
 			caras[contador_cara].setCara(linea);
 			contador_cara++;
 		}
+		else if (id == "g"){
+			//Grupos
+			if (contador_grupos == 0) grupos[0].inicio = 0;
+			else grupos[contador_grupos].inicio = contador_cara + 1;
+			grupos[contador_grupos].id = linea;
+			contador_grupos++;
+		}
 		else{
 			//printf("OTROS     : ");
 		}
@@ -159,26 +200,33 @@ void dibujaObjeto(){
 	//Es llamado dentro de display
 	int iterCaras = 0;
 	int iterVertices = 0;
+	int iterGrupos = 0;
 	static int imprime = 0;
-	for (iterCaras = 0; iterCaras < contadorCaras; iterCaras++){
-		glBindTexture(GL_TEXTURE_2D, tCubo.GLindex);
-		//glNormal3f(normales[caras[iterCaras].normal.front()].x, normales[caras[iterCaras].normal.front()].y, normales[caras[iterCaras].normal.front()].z);
+	char* temp;
+	//cout << "Caras: " << iterCaras << " Grupos: " << iterGrupos << endl;
+	for (iterCaras = 0; iterCaras < numCaras; iterCaras++){
+		if (banderaMtl && iterCaras == grupos[iterGrupos].inicio){
+			temp = new char[grupos[iterGrupos].tex.size()];
+			strcpy(temp, grupos[iterGrupos].tex.c_str());
+			tCubo.LoadTGA(temp);
+			tCubo.BuildGLTexture();
+			tCubo.ReleaseImage();
+			iterGrupos++;
+		}
 		glBegin(GL_POLYGON);
 			
-			//printf("Normales");
 		//Se empieza a dibujar las caras con los datos guarado en el arreglo "vertices" obtenida en cargaObjeto
 		for (iterVertices = 0; iterVertices < caras[iterCaras].vertice.size(); iterVertices++){
-			//glNormal3f(normales[caras[iterCaras].normal.front()].x, normales[caras[iterCaras].normal.front()].y, normales[caras[iterCaras].normal.front()].z);
-			if (!caras[iterCaras].textura.empty()){
+			if (banderaNormal && !caras[iterCaras].normal.empty()){
+				glNormal3f(normales[caras[iterCaras].normal.front()].x, normales[caras[iterCaras].normal.front()].y, normales[caras[iterCaras].normal.front()].z);
+				caras[iterCaras].popNormal();
+			}
+			if (banderaTextura && !caras[iterCaras].textura.empty()){
 				glTexCoord2f(texturas[caras[iterCaras].textura.front() - 1].x, texturas[caras[iterCaras].textura.front() - 1].y);
 				caras[iterCaras].popTextura();
 			}
 			glVertex3f(vertices[caras[iterCaras].vertice.front()].x, vertices[caras[iterCaras].vertice.front()].y, vertices[caras[iterCaras].vertice.front()].z);
-			//printf("NORMALES#%d: %f, $f, %f\n", iterCaras, normales[caras[iterCaras].normal.front()].x, normales[caras[iterCaras].normal.front()].y, normales[caras[iterCaras].normal.front()].z);
-			printf("TEXTURAS#%d: %f, %f\n", iterCaras, texturas[caras[iterCaras].textura.front() - 1].x, texturas[caras[iterCaras].textura.front() - 1].y);
-			printf("VÉRTICE#%d: %f, %f, %f\n\n", iterCaras, vertices[caras[iterCaras].vertice.front()].x, vertices[caras[iterCaras].vertice.front()].y, vertices[caras[iterCaras].vertice.front()].z);
 			caras[iterCaras].popVertice();
-			//caras[iterCaras].popNormal();
 		}
 		glEnd();
 	}
@@ -236,17 +284,8 @@ void display() {
 	//CUBO
 	glPushMatrix();
 	switch (color){
-	case 1:glColor3f(0.3f, 0.3f, 1.0f); break;
-	case 2:glColor3f(0.3f, 1.0f, 0.3f); break;
-	case 3:glColor3f(1.0f, 0.3f, 0.3f); break;
-	case 4:glColor3f(1.0f, 1.0f, 0.3f); break;
-	case 5:glColor3f(1.0f, 0.3f, 1.0f); break;
-
-	case 11:glColor3f(0.3f, 0.3f, 0.3f); break;
-	case 12:glColor3f(0.4f, 0.4f, 0.4f); break;
-	case 13:glColor3f(0.5f, 0.5f, 0.5f); break;
-	case 14:glColor3f(0.6f, 0.6f, 0.6f); break;
-	case 15:glColor3f(0.7f, 0.7f, 0.7f); break;
+	case 1:glColor3f(0.2f, 0.2f, 0.2f); break;
+	case 2:glColor3f(1.0f, 1.0f, 1.0f); break;
 	default:glColor3f(0.8f, 0.8f, 0.8f); break;
 	}
 	dibujaObjeto();
@@ -259,10 +298,7 @@ void init() {
 	glEnable(GL_DEPTH_TEST);
 
 	glEnable(GL_TEXTURE_2D);
-	tCubo.LoadBMP("cube.bmp");
-	tCubo.BuildGLTexture();
-	tCubo.ReleaseImage();
-
+	
 	//CARGAR OBJ
 	cargaObjeto();
 	//CARGAR OBJ
@@ -290,11 +326,12 @@ void keyboard(unsigned char key, int x, int y){
 		switch (key) {
 		case '+':posCamPieZ--; display(); break;
 		case '-':posCamPieZ++; display(); break;
-		case '1':color = 1; display(); break;
-		case '2':color = 2; display(); break;
-		case '3':color = 3; display(); break;
-		case '4':color = 4; display(); break;
-		case '5':color = 5; display(); break;
+		case '1':banderaTextura = !banderaTextura; display(); break;
+		case '2':banderaNormal = !banderaNormal, display();; break;
+		case '3':banderaMtl = !banderaMtl, display();; break;
+		case '4':color = 1; display(); break;
+		case '5':color = 2; display(); break;
+		case '6':color = 3; display(); break;
 		case 27:exit(0); break;
 		}
 	}
@@ -337,6 +374,7 @@ void mouse(int button, int state, int x, int y){
 		gira = (gira ? false : true);
 	}
 }
+
 int main(int argc, char **argv){
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
