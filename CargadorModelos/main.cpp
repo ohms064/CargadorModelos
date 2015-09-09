@@ -142,12 +142,17 @@ int cargaObjeto(){
 		}
 		else if (id == "usemtl"){
 			if (contador_mtl == 26) system("pause");
-			if (numGrupos != 0) grupos[contador_grupos].tex = linea; //Creamos la textura dentro de la variable tex de Grupos para futuro bind
+			if (numGrupos != 0){
+				grupos[contador_grupos].tex = linea; //Creamos la textura dentro de la variable tex de Grupos para futuro bind
+				cout << "textura: " << grupos[contador_grupos].tex << endl;
+			}
 			else { 
 				if (contador_mtl == 0) grupos[0].inicio = 0;
 				else grupos[contador_mtl].inicio = contador_cara + 1;
 				grupos[contador_mtl].tex = linea; //Creamos la textura dentro de la variable tex de Grupos para futuro bind
+				cout << "textura: " << grupos[contador_mtl].tex << endl;
 				contador_mtl++;
+
 			}	
 		}
 		else if (id == "v"){
@@ -208,7 +213,9 @@ void dibujaObjeto(){
 		if (banderaMtl && iterCaras == grupos[iterGrupos].inicio){
 			temp = new char[grupos[iterGrupos].tex.size()];
 			strcpy(temp, grupos[iterGrupos].tex.c_str());
-			tCubo.LoadTGA(temp);
+			size_t pos = grupos[iterGrupos].tex.find(".");
+			if (grupos[iterGrupos].tex.substr(pos + 1, grupos[iterGrupos].tex.length()) == "tga") tCubo.LoadTGA(temp);
+			else if (grupos[iterGrupos].tex.substr(pos + 1, grupos[iterGrupos].tex.length()) == "bmp") tCubo.LoadBMP(temp);
 			tCubo.BuildGLTexture();
 			tCubo.ReleaseImage();
 			iterGrupos++;
