@@ -47,11 +47,12 @@ float upCamPieY = 1;
 float upCamPieZ = 0;
 
 Vertice* vertices; //Guardamos los valores x,y,z de cada vertice (v x y z)
-Texturas texturas[14];  //Guardamos los valores x,y de cada vertice (vt x y)
-
+Texturas* texturas;  //Guardamos los valores x,y de cada vertice (vt x y)
 Cara* caras; //Guardamos los valores de vertices, textura y normal de cada cara, textura y normal son opcionales (f v/vt/vn)
+
 int contadorVertices = 0;
 int contadorCaras = 0;
+int contadorTexturas = 0;
 
 void cuentaID(){
 	string linea;
@@ -69,6 +70,7 @@ void cuentaID(){
 		}
 		else if (id == "vt"){
 			//printf("TEXTURAS: ");
+			contadorTexturas++;
 		}
 		else if (id == "vn"){
 			//printf("NORMALES: ");
@@ -84,6 +86,7 @@ void cuentaID(){
 	cout << "\tVertices: " << contadorVertices << " Caras: " << contadorCaras << endl;
 	vertices = new Vertice[contadorVertices];
 	caras = new Cara[contadorCaras];
+	texturas = new Texturas[contadorTexturas];
 }
 
 int cargaObjeto(){
