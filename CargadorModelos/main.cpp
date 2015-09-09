@@ -12,13 +12,9 @@
 using namespace std;
 
 #define VELOCIDAD 2;
-#define NUVE 20000 //Tamaño del arreglo de vertices
-#define NUTE 20000 //Tamaño del arreglo de texturas
-#define NUCA 20000 //Tamaño del arreglo de caras
 
-// Poner aquí el nombre del archivo sin el .obj
+// Poner aquí el nombre del archivo sin el .obj, es muy importante que el archivo exista
 #define NOMBRE_ARCHIVO "archivo"
-//prueba 1, nomás para ver cómo cambia
 //---------------------------------
 
 CTexture tCubo;
@@ -64,26 +60,27 @@ void cuentaID(){
 		getline(fe, linea);
 		espacio = linea.find(" ");
 		id = linea.substr(0, espacio); //Aquí tenemos el inicio de cada linea que nos indicará que hacer
-		if (!linea.empty())
-		if (id == "v"){
-			contadorVertices++;
-		}
-		else if (id == "vt"){
-			//printf("TEXTURAS: ");
-			contadorTexturas++;
-		}
-		else if (id == "vn"){
-			//printf("NORMALES: ");
-		}
-		else if (id == "s"){
-			//printf("NORMALES: ");
-		}
-		else if (id == "f"){
-			//CARAS
-			contadorCaras++;
+		if (!linea.empty()){
+			if (id == "v"){
+				contadorVertices++;
+			}
+			else if (id == "vt"){
+				//printf("TEXTURAS: ");
+				contadorTexturas++;
+			}
+			else if (id == "vn"){
+				//printf("NORMALES: ");
+			}
+			else if (id == "s"){
+				//printf("NORMALES: ");
+			}
+			else if (id == "f"){
+				//CARAS
+				contadorCaras++;
+			}
 		}
 	}
-	cout << "\tVertices: " << contadorVertices << " Caras: " << contadorCaras << endl;
+	cout << "\tVertices: " << contadorVertices << " Caras: " << contadorCaras << "Texturas: " << contadorTexturas << endl;
 	vertices = new Vertice[contadorVertices];
 	caras = new Cara[contadorCaras];
 	texturas = new Texturas[contadorTexturas];
@@ -151,24 +148,25 @@ int cargaObjeto(){
 }
 void dibujaObjeto(){
 	//Es llamado dentro de display
-	int contadorCARAS = 0;
-	int contadorVERTICES = 0;
+	int iterCaras = 0;
+	int iterVertices = 0;
 	static int imprime = 0;
-	for (contadorCARAS = 0; contadorCARAS < contadorCaras; contadorCARAS++){
+	for (iterCaras = 0; iterCaras < contadorCaras; iterCaras++){
 		glBindTexture(GL_TEXTURE_2D, tCubo.GLindex);
-		//glNormal3f(normales[caras[contadorCARAS].normal.front()].x, normales[caras[contadorCARAS].normal.front()].y, normales[caras[contadorCARAS].normal.front()].z);
+		//glNormal3f(normales[caras[iterCaras].normal.front()].x, normales[caras[iterCaras].normal.front()].y, normales[caras[iterCaras].normal.front()].z);
 		glBegin(GL_POLYGON);
 		//Se empieza a dibujar las caras con los datos guarado en el arreglo "vertices" obtenida en cargaObjeto
-		for (contadorVERTICES = 0; contadorVERTICES < caras[contadorCARAS].vertice.size(); contadorVERTICES++){
-			glTexCoord2f(texturas[caras[contadorCARAS].textura.front()-1].x, texturas[caras[contadorCARAS].textura.front()-1].y);
-			glVertex3f(vertices[caras[contadorCARAS].vertice.front()].x, vertices[caras[contadorCARAS].vertice.front()].y, vertices[caras[contadorCARAS].vertice.front()].z);
-			caras[contadorCARAS].popVertice();
-			caras[contadorCARAS].popTextura();
+		for (iterVertices = 0; iterVertices < caras[iterCaras].vertice.size(); iterVertices++){
+			if (!caras[iterCaras].textura.empty()){
+				glTexCoord2f(texturas[caras[iterCaras].textura.front() - 1].x, texturas[caras[iterCaras].textura.front() - 1].y);
+				caras[iterCaras].popTextura();
+			}
+			glVertex3f(vertices[caras[iterCaras].vertice.front()].x, vertices[caras[iterCaras].vertice.front()].y, vertices[caras[iterCaras].vertice.front()].z);
+			caras[iterCaras].popVertice();		
 		}
 		glEnd();
 	}
 }
-
 
 void reshape(int width, int height) {
 	glViewport(0, 0, width, height);
@@ -337,5 +335,8 @@ int main(int argc, char **argv){
 	glutIdleFunc(animation);
 	glutSpecialFunc(specialKeys);
 	glutMainLoop();
+	delete []vertices;
+	delete[]texturas;
+	delete[]caras;
 	return 0;
 }
