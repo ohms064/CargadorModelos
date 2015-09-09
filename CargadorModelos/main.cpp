@@ -2,8 +2,9 @@
 #include < GL/glut.h>
 #include < stdio.h>
 #include "Vertice.h"
-
 #include "Texturas.h"
+#include "Normal.h"
+
 #include "texture.h"
 #include "Cara.h"
 #include <iostream>
@@ -44,10 +45,12 @@ float upCamPieZ = 0;
 
 Vertice* vertices; //Guardamos los valores x,y,z de cada vertice (v x y z)
 Texturas* texturas;  //Guardamos los valores x,y de cada vertice (vt x y)
-Cara* caras; //Guardamos los valores de vertices, textura y normal de cada cara, textura y normal son opcionales (f v/vt/vn)
+Normal* normales;  //Guardamos los valores x,y de cada vertice (vn x y z)
 
+Cara* caras; //Guardamos los valores de vertices, textura y normal de cada cara, textura y normal son opcionales (f v/vt/vn)
 int contadorVertices = 0;
 int contadorCaras = 0;
+int contadorNormales = 0;
 int contadorTexturas = 0;
 
 void cuentaID(){
@@ -70,6 +73,7 @@ void cuentaID(){
 			}
 			else if (id == "vn"){
 				//printf("NORMALES: ");
+				contadorNormales++;
 			}
 			else if (id == "s"){
 				//printf("NORMALES: ");
@@ -82,8 +86,9 @@ void cuentaID(){
 	}
 	cout << "\tVertices: " << contadorVertices << " Caras: " << contadorCaras << "Texturas: " << contadorTexturas << endl;
 	vertices = new Vertice[contadorVertices];
-	caras = new Cara[contadorCaras];
 	texturas = new Texturas[contadorTexturas];
+	normales = new Normal[contadorNormales];
+	caras = new Cara[contadorCaras];
 }
 
 int cargaObjeto(){
@@ -94,6 +99,7 @@ int cargaObjeto(){
 	int contador_lineas = 0;
 	int contador_punto = 0;//Es el que lleva el conteo del número de puntos que se va a dibujar
 	int contador_texturas = 0;//Es el que lleva el conteo del número de puntos que se va a dibujar
+	int contador_normales = 0;//Es el que lleva el conteo del número de puntos que se va a dibujar
 	int contador_cara = 0;
 	size_t espacio;
 	string id;
@@ -123,7 +129,10 @@ int cargaObjeto(){
 			contador_texturas++;
 		}
 		else if (id == "vn"){
-			//printf("NORMALES: ");
+			//Aquí se guardan las variables x,y del objeto texturas[]
+			normales[contador_normales].setAll(linea);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
+			//normales[contador_normales].print();
+			contador_normales++;
 		}
 		else if (id == "s"){
 			//printf("NORMALES: ");
@@ -155,14 +164,21 @@ void dibujaObjeto(){
 		glBindTexture(GL_TEXTURE_2D, tCubo.GLindex);
 		//glNormal3f(normales[caras[iterCaras].normal.front()].x, normales[caras[iterCaras].normal.front()].y, normales[caras[iterCaras].normal.front()].z);
 		glBegin(GL_POLYGON);
+			
+			//printf("Normales");
 		//Se empieza a dibujar las caras con los datos guarado en el arreglo "vertices" obtenida en cargaObjeto
 		for (iterVertices = 0; iterVertices < caras[iterCaras].vertice.size(); iterVertices++){
+			//glNormal3f(normales[caras[iterCaras].normal.front()].x, normales[caras[iterCaras].normal.front()].y, normales[caras[iterCaras].normal.front()].z);
 			if (!caras[iterCaras].textura.empty()){
 				glTexCoord2f(texturas[caras[iterCaras].textura.front() - 1].x, texturas[caras[iterCaras].textura.front() - 1].y);
 				caras[iterCaras].popTextura();
 			}
 			glVertex3f(vertices[caras[iterCaras].vertice.front()].x, vertices[caras[iterCaras].vertice.front()].y, vertices[caras[iterCaras].vertice.front()].z);
-			caras[iterCaras].popVertice();		
+			//printf("NORMALES#%d: %f, $f, %f\n", iterCaras, normales[caras[iterCaras].normal.front()].x, normales[caras[iterCaras].normal.front()].y, normales[caras[iterCaras].normal.front()].z);
+			printf("TEXTURAS#%d: %f, %f\n", iterCaras, texturas[caras[iterCaras].textura.front() - 1].x, texturas[caras[iterCaras].textura.front() - 1].y);
+			printf("VÉRTICE#%d: %f, %f, %f\n\n", iterCaras, vertices[caras[iterCaras].vertice.front()].x, vertices[caras[iterCaras].vertice.front()].y, vertices[caras[iterCaras].vertice.front()].z);
+			caras[iterCaras].popVertice();
+			//caras[iterCaras].popNormal();
 		}
 		glEnd();
 	}
@@ -335,8 +351,5 @@ int main(int argc, char **argv){
 	glutIdleFunc(animation);
 	glutSpecialFunc(specialKeys);
 	glutMainLoop();
-	delete []vertices;
-	delete[]texturas;
-	delete[]caras;
 	return 0;
 }
