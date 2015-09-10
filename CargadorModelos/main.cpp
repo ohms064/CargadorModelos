@@ -109,7 +109,7 @@ void cuentaID(){
 	normales = new Normal[numNormales];
 	caras = new Cara[numCaras];
 	if(numGrupos == 0) grupos = new Grupo[numMtl];//Sólo se usará si no existen grupos.
-	else grupos = new Grupo[numGrupos + 5];
+	else grupos = new Grupo[numGrupos + 1];
 }
 
 int cargaObjeto(){
@@ -143,14 +143,12 @@ int cargaObjeto(){
 		else if (id == "usemtl"){
 			if (contador_mtl == 26) system("pause");
 			if (numGrupos != 0){
-				grupos[contador_grupos].tex = linea; //Creamos la textura dentro de la variable tex de Grupos para futuro bind
-				cout << "textura: " << grupos[contador_grupos].tex << endl;
+				grupos[contador_grupos - 1].tex = linea; //Creamos la textura dentro de la variable tex de Grupos para futuro bind
 			}
 			else { 
 				if (contador_mtl == 0) grupos[0].inicio = 0;
 				else grupos[contador_mtl].inicio = contador_cara + 1;
 				grupos[contador_mtl].tex = linea; //Creamos la textura dentro de la variable tex de Grupos para futuro bind
-				cout << "textura: " << grupos[contador_mtl].tex << endl;
 				contador_mtl++;
 
 			}	
@@ -189,9 +187,13 @@ int cargaObjeto(){
 		}
 		else if (id == "g"){
 			//Grupos
-			if (contador_grupos == 0) grupos[0].inicio = 0;
-			else grupos[contador_grupos].inicio = contador_cara + 1;
-			grupos[contador_grupos].id = linea;
+			if (contador_grupos == 0){ 
+				grupos[0].inicio = 0; 
+			}
+			else { 
+				grupos[contador_grupos].inicio = contador_cara + 1; 
+				grupos[contador_grupos].id = linea;
+			}
 			contador_grupos++;
 		}
 		else{
@@ -210,12 +212,16 @@ void dibujaObjeto(){
 	char* temp;
 	//cout << "Caras: " << iterCaras << " Grupos: " << iterGrupos << endl;
 	for (iterCaras = 0; iterCaras < numCaras; iterCaras++){
-		if (banderaMtl && iterCaras == grupos[iterGrupos].inicio){
+		if (banderaTextura && iterCaras == grupos[iterGrupos].inicio){
 			temp = new char[grupos[iterGrupos].tex.size()];
 			strcpy(temp, grupos[iterGrupos].tex.c_str());
 			size_t pos = grupos[iterGrupos].tex.find(".");
-			if (grupos[iterGrupos].tex.substr(pos + 1, grupos[iterGrupos].tex.length()) == "tga") tCubo.LoadTGA(temp);
-			else if (grupos[iterGrupos].tex.substr(pos + 1, grupos[iterGrupos].tex.length()) == "bmp") tCubo.LoadBMP(temp);
+			if (grupos[iterGrupos].tex.substr(pos + 1, grupos[iterGrupos].tex.length()) == "tga") { 
+				tCubo.LoadTGA(temp);
+			}
+			else if (grupos[iterGrupos].tex.substr(pos + 1, grupos[iterGrupos].tex.length()) == "bmp") { 
+				tCubo.LoadBMP(temp);
+			}
 			tCubo.BuildGLTexture();
 			tCubo.ReleaseImage();
 			iterGrupos++;
@@ -333,9 +339,21 @@ void keyboard(unsigned char key, int x, int y){
 		switch (key) {
 		case '+':posCamPieZ--; display(); break;
 		case '-':posCamPieZ++; display(); break;
-		case '1':banderaTextura = !banderaTextura; display(); break;
-		case '2':banderaNormal = !banderaNormal, display();; break;
-		case '3':banderaMtl = !banderaMtl, display();; break;
+		case '1':
+			banderaTextura = !banderaTextura; 
+			cout << "Textura: " << banderaTextura << endl;
+			display();
+			break;
+		case '2':
+			banderaNormal = !banderaNormal;
+			cout << "Normal: " << banderaNormal << endl;
+			display(); 
+			break;
+		/*case '3':
+			banderaMtl = !banderaMtl, display();
+			cout << "Mtl: " << banderaMtl << endl;
+			display();
+			break;*/
 		case '4':color = 1; display(); break;
 		case '5':color = 2; display(); break;
 		case '6':color = 3; display(); break;
