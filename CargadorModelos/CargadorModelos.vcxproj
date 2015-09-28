@@ -70,6 +70,7 @@
     <ClCompile Include="Cara.cpp" />
     <ClCompile Include="Grupo.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ModeloObj.cpp" />
     <ClCompile Include="Normal.cpp" />
     <ClCompile Include="Texturas.cpp" />
     <ClCompile Include="texture.cpp" />
@@ -78,6 +79,7 @@
   <ItemGroup>
     <ClInclude Include="Cara.h" />
     <ClInclude Include="Grupo.h" />
+    <ClInclude Include="ModeloObj.h" />
     <ClInclude Include="Normal.h" />
     <ClInclude Include="Texturas.h" />
     <ClInclude Include="texture.h" />
