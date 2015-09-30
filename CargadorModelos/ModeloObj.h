@@ -25,6 +25,20 @@ public:
 
 	CTexture tCubo;
 
+	/* diego 30/09/15 */
+	float pX = 0; //Posición en x
+	float pY = 0; //Posición en y
+	float pZ = 0; //Posición en z
+
+	float rX = 0; //Rotación en X
+	float rY = 0; //Rotación en Y
+	float rZ = 0; //Rotación en Z
+
+	float sX = 1; //Escalamiento en X
+	float sY = 1; //Escalamiento en Y
+	float sZ = 1; //Escalamiento en Z
+	/* diego 30/09/15 */
+
 	int numVertices = 0;
 	int numCaras = 0;
 	int numNormales = 0;

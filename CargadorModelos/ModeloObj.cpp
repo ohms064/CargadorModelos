@@ -15,7 +15,7 @@ ModeloObj::ModeloObj(string fileName)
 
 	size_t espacio;
 	string id;
-	cout << "CuentaID" << endl;
+	//cout << "CuentaID" << endl;
 	while (!fe.eof()){
 		getline(fe, linea);
 		espacio = linea.find(" ");
@@ -49,8 +49,8 @@ ModeloObj::ModeloObj(string fileName)
 			}
 		}
 	}
-	cout << "\tVertices: " << numVertices << " Caras: " << numCaras << " Texturas: " << numTexturas << endl;
-	cout << "\tGrupos: " << numGrupos << "mtl: " << numMtl << endl;
+	//cout << "\tVertices: " << numVertices << " Caras: " << numCaras << " Texturas: " << numTexturas << endl;
+	//cout << "\tGrupos: " << numGrupos << "mtl: " << numMtl << endl;
 	vertices = new Vertice[numVertices];
 	texturas = new Texturas[numTexturas];
 	normales = new Normal[numNormales];
@@ -64,7 +64,7 @@ int ModeloObj::cargaObjeto(){
 		cout << "Error en el archivo" << endl;
 		return 0;
 	}
-	cout << "Obteniendo vertices y caras" << endl;
+	//cout << "Obteniendo vertices y caras" << endl;
 	string linea;
 	ifstream fe(fileName);
 	int contador_lineas = 0;
@@ -150,8 +150,8 @@ int ModeloObj::cargaObjeto(){
 			//printf("OTROS     : ");
 		}
 	}
-	cout << "Dibujando objeto" << endl;
-	cout << "Controles:\n\t '+', '-': Zoom\n\t '1': Textura\n\t '2': Normal\n\t '4', '5': Brillo" << endl;
+	//cout << "Dibujando objeto" << endl;
+	//cout << "Controles:\n\t '+', '-': Zoom\n\t '1': Textura\n\t '2': Normal\n\t '4', '5': Brillo" << endl;
 	return 1;
 }
 
