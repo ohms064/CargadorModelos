@@ -36,6 +36,9 @@
     <ClCompile Include="Grupo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ModeloObj.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cara.h">
@@ -54,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Grupo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModeloObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

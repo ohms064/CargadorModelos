@@ -4,15 +4,11 @@
 #include < stdlib.h>
 #include < GL/glut.h>
 #include < stdio.h>
-#include "Vertice.h"
-#include "Texturas.h"
-#include "Normal.h"
-#include "Grupo.h"
-#include "texture.h"
-#include "Cara.h"
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "ModeloObj.h"
+
 using namespace std;
 
 #define VELOCIDAD 5;
@@ -21,7 +17,7 @@ using namespace std;
 #define NOMBRE_ARCHIVO "link"
 //---------------------------------
 
-CTexture tCubo;
+
 GLfloat posObjeto = -5.0f;
 GLfloat anguloCamaraY = 0.0f;
 GLfloat anguloCamaraX = 0.0f;
@@ -46,203 +42,15 @@ float upCamPieX = 0;
 float upCamPieY = 1;
 float upCamPieZ = 0;
 
-Vertice* vertices; //Guardamos los valores x,y,z de cada vertice (v x y z)
-Texturas* texturas;  //Guardamos los valores x,y de cada vertice (vt x y)
-Normal* normales;  //Guardamos los valores x,y de cada vertice (vn x y z)
-Cara* caras; //Guardamos los valores de vertices, textura y normal de cada cara, textura y normal son opcionales (f v/vt/vn)
-Grupo* grupos;
-
-int numVertices = 0;
-int numCaras = 0;
-int numNormales = 0;
-int numTexturas = 0;
-int numGrupos = 0;
-int numMtl = 0;
-
 bool banderaTextura = false;
 bool banderaNormal = false;
 bool banderaMtl = false;
 
-void cuentaID(){
-	string linea;
-	ifstream fe(NOMBRE_ARCHIVO".obj");
-	size_t espacio;
-	string id;
-	cout << "CuentaID" << endl;
-	while (!fe.eof()){
-		getline(fe, linea);
-		espacio = linea.find(" ");
-		id = linea.substr(0, espacio); //Aquí tenemos el inicio de cada linea que nos indicará que hacer
-		if (!linea.empty()){
-			if (id == "v"){
-				numVertices++;
-			}
-			else if (id == "vt"){
-				//printf("TEXTURAS: ");
-				numTexturas++;
-			}
-			else if (id == "vn"){
-				//printf("NORMALES: ");
-				numNormales++;
-			}
-			else if (id == "s"){
-				//printf("NORMALES: ");
-			}
-			else if (id == "f"){
-				//CARAS
-				numCaras++;
-			}
-			else if (id == "g"){
-				//Grupos
-				numGrupos++;
-			}
-			else if (id == "usemtl"){
-				//Grupos
-				numMtl++;
-			}
-		}
-	}
-	cout << "\tVertices: " << numVertices << " Caras: " << numCaras << " Texturas: " << numTexturas << endl;
-	cout << "\tGrupos: " << numGrupos << "mtl: " << numMtl << endl;
-	vertices = new Vertice[numVertices];
-	texturas = new Texturas[numTexturas];
-	normales = new Normal[numNormales];
-	caras = new Cara[numCaras];
-	if(numGrupos == 0) grupos = new Grupo[numMtl];//Sólo se usará si no existen grupos.
-	else grupos = new Grupo[numGrupos + 1];
-}
+ModeloObj modelo;
 
-int cargaObjeto(){
-	cuentaID();
-	cout << "Obteniendo vertices y caras" << endl;
-	string linea;
-	ifstream fe(NOMBRE_ARCHIVO".obj");
-	int contador_lineas = 0;
-	int contador_punto = 0;//Es el que lleva el conteo del número de puntos que se va a dibujar
-	int contador_texturas = 0;//Es el que lleva el conteo del número de puntos que se va a dibujar
-	int contador_normales = 0;//Es el que lleva el conteo del número de puntos que se va a dibujar
-	int contador_cara = 0;
-	int contador_grupos = 0;
-	int contador_mtl = 0;
-	size_t espacio;
-	string id;
-	while (!fe.eof()){
-		contador_lineas++;
-		getline(fe, linea);
-		//printf("LINEA NO %d:\n\t%s\n", contador_lineas++, linea);	//printf("%s\n", linea);
-		espacio = linea.find(" ");
-		id = linea.substr(0, espacio); //Aquí tenemos el inicio de cada linea que nos indicará que hacer
-		linea.erase(0, linea.find(" ") + 1); //Borramos el identificador de la linea para trabajar sólo con los datos.
-		if (id == "#"){
-			//printf("COMENTARIO: ");
-		}
-		else if (id == "mtllib"){
-			//printf("MATERIALES: ");
-
-		}
-		else if (id == "usemtl"){
-			if (contador_mtl == 26) system("pause");
-			if (numGrupos != 0){
-				grupos[contador_grupos - 1].tex = linea; //Creamos la textura dentro de la variable tex de Grupos para futuro bind
-			}
-			else { 
-				if (contador_mtl == 0) grupos[0].inicio = 0;
-				else grupos[contador_mtl].inicio = contador_cara + 1;
-				grupos[contador_mtl].tex = linea; //Creamos la textura dentro de la variable tex de Grupos para futuro bind
-				contador_mtl++;
-
-			}	
-		}
-		else if (id == "v"){
-			//Aquí se guardan las variables x,y,z del objeto vertices[]
-			vertices[contador_punto].setAll(linea);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
-			//vertices[contador_punto].print();
-			contador_punto++;
-		}
-		else if (id == "vt"){
-			//Aquí se guardan las variables x,y del objeto texturas[]
- 			texturas[contador_texturas].setAll(linea);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
-			//texturas[contador_texturas].print();
-			contador_texturas++;
-		}
-		else if (id == "vn"){
-			//Aquí se guardan las variables x,y del objeto texturas[]
-			normales[contador_normales].setAll(linea);// Cada vez que se llama a aspe retorna el token al que este apuntando y cambio su apuntador al siguiente token
-			//normales[contador_normales].print();
-			contador_normales++;
-		}
-		else if (id == "s"){
-			//printf("NORMALES: ");
-		}
-		else if (id == "f"){
-			//CARAS
-			size_t pos = linea.find(" ");
-			while ( pos != std::string::npos){//Mientras haya espacios dentro de la cadena, esto significa que hay más de un vértice que guardar.
-				caras[contador_cara].setCara(linea.substr(0, pos));//Aquí mismo se guarda vértice/textura/normal
-				linea.erase(0, linea.find(" ") + 1);
-				pos = linea.find(" ");
-			}
-			caras[contador_cara].setCara(linea);
-			contador_cara++;
-		}
-		else if (id == "g"){
-			//Grupos
-			if (contador_grupos == 0){ 
-				grupos[0].inicio = 0; 
-			}
-			else { 
-				grupos[contador_grupos].inicio = contador_cara + 1; 
-				grupos[contador_grupos].id = linea;
-			}
-			contador_grupos++;
-		}
-		else{
-			//printf("OTROS     : ");
-		}
-	}
-	cout << "Dibujando objeto" << endl;
-	return 0;
-}
-void dibujaObjeto(){
-	//Es llamado dentro de display
-	int iterCaras = 0;
-	int iterVertices = 0;
-	int iterGrupos = 0;
-	static int imprime = 0;
-	char* temp;
-	//cout << "Caras: " << iterCaras << " Grupos: " << iterGrupos << endl;
-	for (iterCaras = 0; iterCaras < numCaras; iterCaras++){
-		if (banderaTextura && iterCaras == grupos[iterGrupos].inicio){
-			temp = new char[grupos[iterGrupos].tex.size()];
-			strcpy(temp, grupos[iterGrupos].tex.c_str());
-			size_t pos = grupos[iterGrupos].tex.find(".");
-			if (grupos[iterGrupos].tex.substr(pos + 1, grupos[iterGrupos].tex.length()) == "tga") { 
-				tCubo.LoadTGA(temp);
-			}
-			else if (grupos[iterGrupos].tex.substr(pos + 1, grupos[iterGrupos].tex.length()) == "bmp") { 
-				tCubo.LoadBMP(temp);
-			}
-			tCubo.BuildGLTexture();
-			tCubo.ReleaseImage();
-			iterGrupos++;
-		}
-		glBegin(GL_POLYGON);
-			
-		//Se empieza a dibujar las caras con los datos guarado en el arreglo "vertices" obtenida en cargaObjeto
-		for (iterVertices = 0; iterVertices < caras[iterCaras].vertice.size(); iterVertices++){
-			if (banderaNormal && !caras[iterCaras].normal.empty()){
-				glNormal3f(normales[caras[iterCaras].normal.front()].x, normales[caras[iterCaras].normal.front()].y, normales[caras[iterCaras].normal.front()].z);
-				caras[iterCaras].popNormal();
-			}
-			if (banderaTextura && !caras[iterCaras].textura.empty()){
-				glTexCoord2f(texturas[caras[iterCaras].textura.front() - 1].x, texturas[caras[iterCaras].textura.front() - 1].y);
-				caras[iterCaras].popTextura();
-			}
-			glVertex3f(vertices[caras[iterCaras].vertice.front()].x, vertices[caras[iterCaras].vertice.front()].y, vertices[caras[iterCaras].vertice.front()].z);
-			caras[iterCaras].popVertice();
-		}
-		glEnd();
-	}
+int cargarObjs(){
+	modelo = { NOMBRE_ARCHIVO".obj" };
+	return modelo.cargaObjeto();
 }
 
 void reshape(int width, int height) {
@@ -301,7 +109,9 @@ void display() {
 	case 2:glColor3f(1.0f, 1.0f, 1.0f); break;
 	default:glColor3f(0.8f, 0.8f, 0.8f); break;
 	}
-	dibujaObjeto();
+	//dibujaObjeto();
+	modelo.dibujaObjeto(banderaTextura, banderaNormal);
+	
 	glPopMatrix();
 	glPopMatrix();
 	glutSwapBuffers();
@@ -313,7 +123,7 @@ void init() {
 	glEnable(GL_TEXTURE_2D);
 	
 	//CARGAR OBJ
-	cargaObjeto();
+	cargarObjs();
 	//CARGAR OBJ
 }
 
