@@ -5,7 +5,7 @@ using namespace std;
 class Material
 {
 public:
-	string mapKd; //Guarda el valor de la imagen que se usará
+	string mapKd, mapKa, mapKs; //Guarda el valor de la imagen que se usará
 	float Ns, Ni, d; //Los valores respectivos
 	float Ka[3], Kd[3], Ks[3];
 	int illum;

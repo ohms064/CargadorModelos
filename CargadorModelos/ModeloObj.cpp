@@ -263,6 +263,12 @@ void ModeloObj::cargaMaterial(string matName){
 		else if (id == "map_Kd"){
 			temporal.mapKd = linea;
 		}
+		else if (id == "map_Ks"){
+			temporal.mapKs = linea;
+		}
+		else if (id == "map_Ka"){
+			temporal.mapKa = linea;
+		}
 	}
 	materiales[idMaterial] = temporal; //Llegamos al final y guardamos el último material
 }

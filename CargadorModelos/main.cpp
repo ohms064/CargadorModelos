@@ -1,6 +1,7 @@
 #ifdef _MSC_VER
 #define _CRT_SECURE_NO_WARNINGS
 #endif
+#define _USE_MATH_DEFINES
 #include < stdlib.h>
 #include < GL/glut.h>
 #include < stdio.h>
@@ -9,6 +10,7 @@
 #include <string>
 #include "ModeloObj.h"
 #include <map>
+#include <math.h>
 
 using namespace std;
 #define VELOCIDAD 5;
@@ -137,9 +139,9 @@ void display() {
 			for (itr = objetos.begin(); itr != objetos.end(); ++itr){
 				glPushMatrix();
 				glTranslatef((*itr).second.pX, (*itr).second.pY, (*itr).second.pZ);
-				glRotatef((*itr).second.rX, 1, 0, 0);
-				glRotatef((*itr).second.rY, 0, 1, 0);
-				glRotatef((*itr).second.rZ, 0, 0, 1);
+				glRotatef((*itr).second.rX * 180 / M_PI, 1, 0, 0);
+				glRotatef((*itr).second.rY * 180 / M_PI, 0, 1, 0);
+				glRotatef((*itr).second.rZ * 180 / M_PI, 0, 0, 1);
 				glScalef((*itr).second.sX, (*itr).second.sY, (*itr).second.sZ);
 				objetos[(*itr).first].dibujaObjeto(banderaTextura, banderaNormal);
 				glPopMatrix();
@@ -261,9 +263,9 @@ void init() {
 							escenas[nombre_instancia].rZ = f3;
 						}
 						else if (id == "escalamiento"){
-							escenas[nombre_instancia].sX = f1;
-							escenas[nombre_instancia].sY = f2;
-							escenas[nombre_instancia].sZ = f3;
+							escenas[nombre_instancia].sX *= f1;
+							escenas[nombre_instancia].sY *= f2;
+							escenas[nombre_instancia].sZ *= f3;
 						}
 					}
 					else if (objetos.find(nombre_instancia) != objetos.end()){
