@@ -48,6 +48,10 @@ ModeloObj::ModeloObj(string fileName)
 				//Grupos
 				numGrupos++;
 			}
+			else if (id == "o"){
+				//Objetos
+				numObjetos++;
+			}
 			else if (id == "usemtl"){
 				//Grupos
 				numMtl++;
@@ -66,6 +70,7 @@ ModeloObj::ModeloObj(string fileName)
 	caras = new Cara[numCaras];
 	if (numGrupos == 0) grupos = new Grupo[numMtl];//Sólo se usará si no existen grupos.
 	else grupos = new Grupo[numGrupos + 1];
+	if (numObjetos != 0) objetos = new Grupo[numObjetos + 1];
 }
 
 int ModeloObj::cargaObjeto(){
@@ -82,6 +87,7 @@ int ModeloObj::cargaObjeto(){
 	int contador_normales = 0;//Es el que lleva el conteo del número de puntos que se va a dibujar
 	int contador_cara = 0;
 	int contador_grupos = 0;
+	int contador_objetos = 0;
 	int contador_mtl = 0;
 	size_t espacio;
 	string id;
@@ -150,6 +156,12 @@ int ModeloObj::cargaObjeto(){
 				grupos[contador_grupos].id = linea;
 			}
 			contador_grupos++;
+		}
+		else if (id == "o"){
+			//Objetos
+			objetos[contador_objetos].inicio = contador_cara + 1;
+			objetos[contador_objetos].id = linea;
+			contador_objetos++;
 		}
 		else{
 			//printf("OTROS     : ");
