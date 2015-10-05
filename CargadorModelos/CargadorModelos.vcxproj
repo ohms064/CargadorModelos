@@ -70,6 +70,7 @@
     <ClCompile Include="Cara.cpp" />
     <ClCompile Include="Grupo.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="ModeloObj.cpp" />
     <ClCompile Include="Normal.cpp" />
     <ClCompile Include="Texturas.cpp" />
@@ -79,6 +80,7 @@
   <ItemGroup>
     <ClInclude Include="Cara.h" />
     <ClInclude Include="Grupo.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="ModeloObj.h" />
     <ClInclude Include="Normal.h" />
     <ClInclude Include="Texturas.h" />
@@ -90,6 +92,8 @@
     <Image Include="cube.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="archivo.wrl" />
+    <None Include="link.mtl" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

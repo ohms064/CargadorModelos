@@ -9,6 +9,7 @@ public:
 	string id;
 	int inicio;
 	string tex;
+
 	Grupo();
 	void createTexture(string filename);
 };

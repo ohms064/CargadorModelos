@@ -12,6 +12,7 @@
 #include "Normal.h"
 #include "Grupo.h"
 #include "Cara.h"
+#include "Material.h"
 
 using namespace std;
 class ModeloObj
@@ -21,6 +22,7 @@ public:
 	Texturas* texturas;  //Guardamos los valores x,y de cada vertice (vt x y)
 	Normal* normales;  //Guardamos los valores x,y de cada vertice (vn x y z)
 	Cara* caras; //Guardamos los valores de vertices, textura y normal de cada cara, textura y normal son opcionales (f v/vt/vn)
+	Material* materiales;
 	Grupo* grupos;
 
 	CTexture tCubo;
@@ -54,5 +56,6 @@ public:
 
 	int ModeloObj::cargaObjeto();
 	void ModeloObj::dibujaObjeto(bool banderaTextura, bool banderaNormal);
+	void ModeloObj::cargaMaterial();
 };
 

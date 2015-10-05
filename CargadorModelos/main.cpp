@@ -164,7 +164,8 @@ void init() {
 	glEnable(GL_TEXTURE_2D);
 //WRL
 	string linea;
-	ifstream fe("archivo.wrl");
+	ifstream fe(NOMBRE_ARCHIVO".wrl");
+
 
 	size_t espacio;
 	string id;
@@ -182,7 +183,9 @@ void init() {
 
 					nombre_modelo = linea.substr(linea.find(" ") + 1);
 					ruta_modelo = nombre_modelo.substr(nombre_modelo.find(" ") + 1);
+					cout << "Obteniendo modelo " << nombre_modelo << endl;
 					
+					//Creo es innecesario esta parte, sólo falta no sumarle 1 en las instrucciones anteriores
 					nombre_modelo = nombre_modelo.substr(0, nombre_modelo.find(" "));
 					ruta_modelo = ruta_modelo.substr(0, ruta_modelo.find(" "));
 
@@ -195,13 +198,16 @@ void init() {
 					nombre_modelo = linea.substr(linea.find(" ") + 1);
 					nombre_instancia = nombre_modelo.substr(nombre_modelo.find(" ") + 1);
 
+					cout << "Creando instancia del modelo: " << nombre_modelo << " " << nombre_instancia << endl;
+
+					//Creo es innecesario esta parte, sólo falta no sumarle 1 en las instrucciones anteriores
 					nombre_modelo = nombre_modelo.substr(0, nombre_modelo.find(" "));
 					nombre_instancia = nombre_instancia.substr(0, nombre_instancia.find(" "));
 
 					ModeloObj modelo;
 
 					if (modelos[nombre_modelo]!=""){
-						modelo = { modelos[nombre_modelo] };
+						modelo = { modelos[nombre_modelo] }; //Construimos el modelo
 						if (id == "escena"){
 							escenas[nombre_instancia] = modelo;
 							escenas[nombre_instancia].cargaObjeto();
@@ -216,10 +222,11 @@ void init() {
 						}
 					}
 					else{
-						cerr << "No existe ese tipo de modelo" << endl;
+						cerr << "No existe ese tipo de modelo" << endl; //Error
 					}
 				}
 				else if (id == "posicion" || id == "rotacion" || id == "escalamiento"){
+					cout << "Estableciendo transformaciones: " << id << endl;
 					string nombre_instancia;
 					string p1, p2, p3; //Parámetro 1, parámetro 2, parámetro 3, 
 					//faltaría comprobar que existieran todos los parámetros
@@ -239,6 +246,8 @@ void init() {
 					f2 = stof(p2, &sz);
 					f3 = stof(p3, &sz);
 
+					//El objeto ModeloObj no puede guardar los valores de rotación porque entonces sólo se podría
+					//crear una instancia de cada modelo o que todos los modelos compartan transformaciones
 					if (escenas.find(nombre_instancia) != escenas.end()){
 						cout << "2 entré aquí por: " << linea << endl;
 						if(id=="posicion"){

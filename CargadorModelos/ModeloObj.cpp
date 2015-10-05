@@ -11,7 +11,12 @@ ModeloObj::ModeloObj(string fileName)
 	this->fileName = fileName;
 	ifstream fe(fileName);
 
-	if (!fe.good()) banderaFile = false;
+	if (!fe.good()) {
+		banderaFile = false;
+		cout << "Error al abrir el archivo: " << fileName << endl;
+		return;
+	}
+
 
 	size_t espacio;
 	string id;
@@ -55,6 +60,7 @@ ModeloObj::ModeloObj(string fileName)
 	texturas = new Texturas[numTexturas];
 	normales = new Normal[numNormales];
 	caras = new Cara[numCaras];
+	materiales = new Material[numMtl];
 	if (numGrupos == 0) grupos = new Grupo[numMtl];//Sólo se usará si no existen grupos.
 	else grupos = new Grupo[numGrupos + 1];
 }
@@ -195,6 +201,13 @@ void ModeloObj::dibujaObjeto(bool banderaTextura, bool banderaNormal){
 		}
 		glEnd();
 	}
+}
+
+void ModeloObj::cargaMaterial(){
+	Material temporal;
+	size_t espacio;
+	string id;
+	string linea;
 }
 
 ModeloObj::~ModeloObj()

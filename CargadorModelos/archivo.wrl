@@ -1,42 +1,45 @@
-#Mi mundo de pingüinos
-<modelo cubo archivo.obj>
-<objeto cubo cubo_a>
-<objeto cubo cubo_b>
-<objeto cubo cubo_c>
-<objeto cubo cubo_d>
+﻿#VRML V2.0 utf8
+#Mundo de ejemplo
 
-<posicion cubo_a 0.0 0.0 0.0>
-<posicion cubo_b 10.0 0.0 0.0>
-<posicion cubo_c 10.0 10.0 0.0>
-<posicion cubo_d 0.0 10.0 0.0>
+#carga de modelos
+<modelo link ./link.obj>
+<modelo tux ./Tux2.obj>
 
-<escalamiento cubo_a 1.0 1.0 1.0>
-<escalamiento cubo_b 1.0 1.0 1.0>
-<escalamiento cubo_c 1.0 1.0 1.0>
-<escalamiento cubo_d 1.0 1.0 1.0>
+#creando instancias de los modelos
+<objeto link link_1>
+<objeto tux tux_1>
+#<objeto tux tux_2>
 
-<rotacion cubo_a 0.0 0.0 0.0>
-<rotacion cubo_b 0.0 45.0 0.0>
-<rotacion cubo_c 45.0 45.0 0.0>
-<rotacion cubo_d 45.0 0.0 0.0>
+#aplicando transformaciones basicas
+<posicion link_1 0.0 0.0 0.0>
+<escalamiento link_1 0.5 0.5 0.5>
+<posicion tux_1 1.0 0.0 0.0>
+<posicion tux_2 0.0 1.0 0.0>
+<escalamiento tux_1 1.0 1.0 1.0>
+<escalamiento tux_2 0.5 0.5 0.5>
+<rotacion tux_1 1.0 0.0 0.0>
 
-#<posicion link_1 0.0 0.0 0.0>
-#<escalamiento link_1 0.5 0.5 0.5>
-#<posicion tux_1 1.0 0.0 0.0>
-#<posicion tux_2 0.0 1.0 0.0>
-#<escalamiento tux_1 1.0 1.0 1.0>
-#<escalamiento tux_2 0.5 0.5 0.5>
 
-#open university
-#cout << "modelos[nombre_modelo] = '" << modelos[nombre_modelo] << "'" << endl;
-#cout << "Nombre modelo: " << nombre_modelo << endl;
-#cout << "ruta modelo" << modelos[nombre_modelo] << endl;
+#NOTA las rotaciones son en radianes en el standar, pero si lo dejaron en grados no hay problema
+#conversion de grados a radianes
+#30:	0.5236
+#60:	1.0472
+#90:	1.5708
+#180:	3.1416
+#270:	4.7124
+
+#Es importante que vean que nosotros manejamos el archivo wrl comom el generador de escenario
+#lo que es la carga de objetos, cámara y colisiones lo integramos con las demás prácticas
+#por lo cual no tomamos la estructura básica per se del archivo vrml
+#Como ejemplo
+# VRML V2.0 utf8
+# A sample file with a single stupid node
 #
-#std::cout << "Nombre modelo: " << nombre_modelo << endl;
-#std::cout << "Nombre instancia: " << nombre_instancia << endl;
-#std::cout << "escena: " << linea << endl;
-#std::cout << "objeto: " << linea << endl;
-#std::cout << "personaje: " << linea << endl;
-#
-#cout <<"f1, f2, f3 = ("<<f1<<", "<<f2<<", "<<f3<<")"<<endl;
-#cout << "x, y, z = (" << escenas[nombre_instancia].pX << ", " << escenas[nombre_instancia].pY << ", " << escenas[nombre_instancia].pZ << ")" << endl;
+#Transform {
+#   translation 0 2 0
+#   children [
+#      Shape {
+#         geometry Sphere {}
+#      }
+#     ]
+# }

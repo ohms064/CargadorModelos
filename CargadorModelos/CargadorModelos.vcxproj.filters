@@ -39,6 +39,9 @@
     <ClCompile Include="ModeloObj.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cara.h">
@@ -62,6 +65,9 @@
     <ClInclude Include="ModeloObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="cube.png">
@@ -73,5 +79,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="archivo.wrl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="link.mtl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
