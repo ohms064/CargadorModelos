@@ -13,6 +13,7 @@
 #include "Grupo.h"
 #include "Cara.h"
 #include "Material.h"
+#include <map>
 
 using namespace std;
 class ModeloObj
@@ -22,8 +23,9 @@ public:
 	Texturas* texturas;  //Guardamos los valores x,y de cada vertice (vt x y)
 	Normal* normales;  //Guardamos los valores x,y de cada vertice (vn x y z)
 	Cara* caras; //Guardamos los valores de vertices, textura y normal de cada cara, textura y normal son opcionales (f v/vt/vn)
-	Material* materiales;
+	map<string, Material> materiales;
 	Grupo* grupos;
+	Grupo* objetos;
 
 	CTexture tCubo;
 
@@ -41,12 +43,13 @@ public:
 	float sZ = 1; //Escalamiento en Z
 	/* diego 30/09/15 */
 
-	int numVertices = 0;
-	int numCaras = 0;
-	int numNormales = 0;
-	int numTexturas = 0;
-	int numGrupos = 0;
-	int numMtl = 0;
+	int numVertices = 0; // v
+	int numCaras = 0; // f
+	int numNormales = 0; // vn
+	int numTexturas = 0; // vt
+	int numGrupos = 0; // g
+	int numMtl = 0; // usemtl
+	int numObjetos = 0; // o
 	string fileName = "";
 	bool banderaFile = true;
 
@@ -56,6 +59,6 @@ public:
 
 	int ModeloObj::cargaObjeto();
 	void ModeloObj::dibujaObjeto(bool banderaTextura, bool banderaNormal);
-	void ModeloObj::cargaMaterial();
+	void ModeloObj::cargaMaterial(string matName);
 };
 

@@ -44,9 +44,9 @@ float upCamPieX = 0;
 float upCamPieY = 1;
 float upCamPieZ = 0;
 
-bool banderaTextura = false;
-bool banderaNormal = false;
-bool banderaMtl = false;
+bool banderaTextura = true;
+bool banderaNormal = true;
+bool banderaMtl = true;
 
 /*
 void cargarObjs(string nombre_archivo){

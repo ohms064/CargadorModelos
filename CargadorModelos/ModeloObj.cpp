@@ -52,6 +52,10 @@ ModeloObj::ModeloObj(string fileName)
 				//Grupos
 				numMtl++;
 			}
+			else if (id == "mtllib"){
+				linea.erase(0, linea.find(" ") + 1);
+				cargaMaterial(linea);
+			}
 		}
 	}
 	//cout << "\tVertices: " << numVertices << " Caras: " << numCaras << " Texturas: " << numTexturas << endl;
@@ -60,7 +64,6 @@ ModeloObj::ModeloObj(string fileName)
 	texturas = new Texturas[numTexturas];
 	normales = new Normal[numNormales];
 	caras = new Cara[numCaras];
-	materiales = new Material[numMtl];
 	if (numGrupos == 0) grupos = new Grupo[numMtl];//Sólo se usará si no existen grupos.
 	else grupos = new Grupo[numGrupos + 1];
 }
@@ -92,18 +95,14 @@ int ModeloObj::cargaObjeto(){
 		if (id == "#"){
 			//printf("COMENTARIO: ");
 		}
-		else if (id == "mtllib"){
-			//printf("MATERIALES: ");
 
-		}
 		else if (id == "usemtl"){
-			if (contador_mtl == 26) system("pause");
-			if (numGrupos != 0){
+			if (numGrupos != 0){ 
 				grupos[contador_grupos - 1].tex = linea; //Creamos la textura dentro de la variable tex de Grupos para futuro bind
 			}
-			else {
+			else {//Si nunca hubiera habido grupos, se utilizan el usemtl como grupos
 				if (contador_mtl == 0) grupos[0].inicio = 0;
-				else grupos[contador_mtl].inicio = contador_cara + 1;
+				else grupos[contador_mtl].inicio = contador_cara + 1;//
 				grupos[contador_mtl].tex = linea; //Creamos la textura dentro de la variable tex de Grupos para futuro bind
 				contador_mtl++;
 
@@ -167,21 +166,23 @@ void ModeloObj::dibujaObjeto(bool banderaTextura, bool banderaNormal){
 	int iterVertices = 0;
 	int iterGrupos = 0;
 	static int imprime = 0;
-	char* temp;
+	char* temp; //Utilicé un char* porque CTexture recibe valores de este tipo
+	string id;
 	//cout << "Caras: " << iterCaras << " Grupos: " << iterGrupos << endl;
 	for (iterCaras = 0; iterCaras < numCaras; iterCaras++){
-		if (banderaTextura && iterCaras == grupos[iterGrupos].inicio){
-			temp = new char[grupos[iterGrupos].tex.size()];
-			strcpy(temp, grupos[iterGrupos].tex.c_str());
-			size_t pos = grupos[iterGrupos].tex.find(".");
-			if (grupos[iterGrupos].tex.substr(pos + 1, grupos[iterGrupos].tex.length()) == "tga") {
+		if (banderaTextura && iterCaras == grupos[iterGrupos].inicio){ 
+			id = materiales[grupos[iterGrupos].tex].mapKd; //Obtenemos la textura
+			temp = new char[id.size()]; //Obtenemos el tamaño del nombre de la textura
+			strcpy(temp, id.c_str()); //Debemos copiar el c_str porque c_str retorna un apuntador
+			size_t pos = id.find(".");
+			if (id.substr(pos + 1, id.length()) == "tga") {
 				tCubo.LoadTGA(temp);
 			}
-			else if (grupos[iterGrupos].tex.substr(pos + 1, grupos[iterGrupos].tex.length()) == "bmp") {
+			else if (id.substr(pos + 1, id.length()) == "bmp") {
 				tCubo.LoadBMP(temp);
 			}
 			tCubo.BuildGLTexture();
-			tCubo.ReleaseImage();
+			//tCubo.ReleaseImage(); //La verdad no sé porque esta linea rompe el programa pero antes estaba
 			iterGrupos++;
 		}
 		glBegin(GL_POLYGON);
@@ -203,11 +204,55 @@ void ModeloObj::dibujaObjeto(bool banderaTextura, bool banderaNormal){
 	}
 }
 
-void ModeloObj::cargaMaterial(){
+void ModeloObj::cargaMaterial(string matName){
 	Material temporal;
+	string idMaterial = "";
 	size_t espacio;
 	string id;
 	string linea;
+	ifstream fe(matName);
+	if (!fe.good()) {
+		cout << "Error al abrir el archivo: " << matName << endl;
+		return;
+	}
+	while (!fe.eof()){
+		getline(fe, linea);
+		espacio = linea.find(" ");
+		id = linea.substr(0, espacio);
+		linea.erase(0, linea.find(" ") + 1);
+		if (id == "newmtl"){
+			if (idMaterial != ""){//Significa que por lo menos ya creamos un material completamente
+				materiales[idMaterial] = temporal;
+				temporal = {};
+			}
+			idMaterial = linea;
+		}
+		else if (id == "Ns"){
+			temporal.Ns = stof(linea);
+		}
+		else if (id == "Ka"){
+			temporal.setKa(linea);
+		}
+		else if (id == "Ks"){
+			temporal.setKs(linea);
+		}
+		else if (id == "Kd"){
+			temporal.setKd(linea);
+		}
+		else if (id == "Ni"){
+			temporal.Ni = stof(linea);
+		}
+		else if (id == "d"){
+			temporal.d = stof(linea);
+		}
+		else if (id == "illum"){
+			temporal.illum = stoi(linea);
+		}
+		else if (id == "map_Kd"){
+			temporal.mapKd = linea;
+		}
+	}
+	materiales[idMaterial] = temporal; //Llegamos al final y guardamos el último material
 }
 
 ModeloObj::~ModeloObj()
