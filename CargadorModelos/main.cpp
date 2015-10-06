@@ -10,6 +10,13 @@
 #include "ModeloObj.h"
 #include <map>
 
+#define Link 1//!!!!!generacion de Link
+#define Tox 2 //!!!!!generacion de Tox
+#define EXIT 9 //!!!!!Exit
+#define ESC 27 //!!!!!Escape
+#define TAB 9 //!!!!!tabulador
+
+
 using namespace std;
 #define VELOCIDAD 5;
 // Poner aquí el nombre del archivo sin el .obj, es muy importante que el archivo exista
@@ -48,12 +55,32 @@ bool banderaTextura = true;
 bool banderaNormal = true;
 bool banderaMtl = true;
 
+int opcion = 1;//!!!!!Valor para Opcion del MenuAction
+
+
 /*
 void cargarObjs(string nombre_archivo){
 	modelo = { nombre_archivo };
 	modelo.cargaObjeto();
 }
 */
+void menuAction(int value){//!!!!!generacion de Modelos y del Mundo
+	opcion = value;
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glColor3f(0.5, 0.2, 0.9);
+	switch (value){
+	case Link:
+		glutSolidSphere(1, 20, 20);
+		break;
+	case Tox:
+		glutSolidCube(1);
+		break;
+	case EXIT:
+		exit(0);
+		break;
+	}
+	glutSwapBuffers();
+}//!!!!!fin de la generacion de Modelos y del Mundo
 void reshape(int width, int height) {
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
@@ -156,8 +183,24 @@ void display() {
 			}
 		glPopMatrix();
 	glPopMatrix();
+	menuAction(0);//!!!!!Evitar activar el MenuAction
 	glutSwapBuffers();
+	glFinish();//!!!!!Fin del evento
 }
+void menu(){//!!!!!Menu para dibujado de Obj o wrl
+	int submenu1, submenu2;
+	submenu1 = glutCreateMenu(menuAction);
+	glutAddMenuEntry("Dibujar Link", Link);
+
+	submenu2 = glutCreateMenu(menuAction);
+	glutAddMenuEntry("Dibujar Tox", Tox);
+
+	glutCreateMenu(menuAction);
+	glutAddSubMenu("Figura Link", submenu1);
+	glutAddSubMenu("Figura Tox", submenu2);
+	glutAddMenuEntry("Salir", EXIT);
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
+}//!!!!!Fin Menu para dibujado de Obj o wrl
 void init() {
 	glClearColor(0, 0, 0, 0);
 	glEnable(GL_DEPTH_TEST);
@@ -393,7 +436,18 @@ void specialKeys(int key, int x, int y) {
 void mouse(int button, int state, int x, int y){
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
 		gira = (gira ? false : true);
-	}
+	}//!!!!!Opciones del mouse dentro del Menu para dibujado de Obj o wrl
+	switch (button){
+	case GLUT_LEFT_BUTTON:
+		if (state == GLUT_UP){
+			opcion++;
+			if (opcion > 10){
+				opcion = 1;
+			}
+			menuAction(opcion);
+		}
+		break;
+	}//!!!!!Fin de las Opciones del mouse dentro del Menu para dibujado de Obj o wrl
 }
 
 int main(int argc, char **argv){
@@ -402,6 +456,7 @@ int main(int argc, char **argv){
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(600, 600);
 	glutCreateWindow(NOMBRE_ARCHIVO);
+	menu(); //!!!!Activacion del menu Interactivo
 	init();
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
