@@ -52,6 +52,7 @@ public:
 	int numObjetos = 0; // o
 	string fileName = "";
 	bool banderaFile = true;
+	bool banderaDibujo = true;
 
 	ModeloObj();
 	ModeloObj(string fileName);
