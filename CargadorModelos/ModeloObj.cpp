@@ -172,50 +172,6 @@ int ModeloObj::cargaObjeto(){
 	return 1;
 }
 
-void ModeloObj::dibujaObjeto(bool banderaTextura, bool banderaNormal){
-	//Es llamado dentro de display
-	int iterCaras = 0;
-	int iterVertices = 0;
-	int iterGrupos = 0;
-	static int imprime = 0;
-	char* temp; //Utilicé un char* porque CTexture recibe valores de este tipo
-	string id;
-	//cout << "Caras: " << iterCaras << " Grupos: " << iterGrupos << endl;
-	for (iterCaras = 0; iterCaras < numCaras; iterCaras++){
-		if (banderaTextura && iterCaras == grupos[iterGrupos].inicio){ 
-			id = materiales[grupos[iterGrupos].tex].mapKd; //Obtenemos la textura
-			temp = new char[id.size()]; //Obtenemos el tamaño del nombre de la textura
-			strcpy(temp, id.c_str()); //Debemos copiar el c_str porque c_str retorna un apuntador
-			size_t pos = id.find(".");
-			if (id.substr(pos + 1, id.length()) == "tga") {
-				tCubo.LoadTGA(temp);
-			}
-			else if (id.substr(pos + 1, id.length()) == "bmp") {
-				tCubo.LoadBMP(temp);
-			}
-			tCubo.BuildGLTexture();
-			//tCubo.ReleaseImage(); //La verdad no sé porque esta linea rompe el programa pero antes estaba
-			iterGrupos++;
-		}
-		glBegin(GL_POLYGON);
-
-		//Se empieza a dibujar las caras con los datos guarado en el arreglo "vertices" obtenida en cargaObjeto
-		for (iterVertices = 0; iterVertices < caras[iterCaras].vertice.size(); iterVertices++){
-			if (banderaNormal && !caras[iterCaras].normal.empty()){
-				glNormal3f(normales[caras[iterCaras].normal.front()].x, normales[caras[iterCaras].normal.front()].y, normales[caras[iterCaras].normal.front()].z);
-				caras[iterCaras].popNormal();
-			}
-			if (banderaTextura && !caras[iterCaras].textura.empty()){
-				glTexCoord2f(texturas[caras[iterCaras].textura.front() - 1].x, texturas[caras[iterCaras].textura.front() - 1].y);
-				caras[iterCaras].popTextura();
-			}
-			glVertex3f(vertices[caras[iterCaras].vertice.front()].x, vertices[caras[iterCaras].vertice.front()].y, vertices[caras[iterCaras].vertice.front()].z);
-			caras[iterCaras].popVertice();
-		}
-		glEnd();
-	}
-}
-
 void ModeloObj::cargaMaterial(string matName){
 	Material temporal;
 	string idMaterial = "";

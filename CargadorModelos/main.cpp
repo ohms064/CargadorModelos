@@ -18,7 +18,7 @@ using namespace std;
 // Poner aquí el nombre del archivo sin el .obj, es muy importante que el archivo exista
 #define NOMBRE_ARCHIVO "archivo"
 //---------------------------------
-ModelosWorld escenario;
+ModelosWorld mundo;
 
 GLfloat posObjeto = -5.0f;
 GLfloat anguloCamaraY = 0.0f;
@@ -63,6 +63,100 @@ void reshape(int width, int height) {
 	glLoadIdentity();
 }
 
+
+void dibujaObjeto(ModeloObj objeto){
+	int iterCaras = 0;
+	int iterVertices = 0;
+	int iterGrupos = 0;
+	static int imprime = 0;
+	char* temp; //Utilicé un char* porque CTexture recibe valores de este tipo
+	string id;
+	//cout << "Caras: " << iterCaras << " Grupos: " << iterGrupos << endl;
+	for (iterCaras = 0; iterCaras < objeto.numCaras; iterCaras++){
+		if (banderaTextura && iterCaras == objeto.grupos[iterGrupos].inicio){
+			id = objeto.materiales[objeto.grupos[iterGrupos].tex].mapKd; //Obtenemos la textura
+			temp = new char[id.size()]; //Obtenemos el tamaño del nombre de la textura
+			strcpy(temp, id.c_str()); //Debemos copiar el c_str porque c_str retorna un apuntador
+			size_t pos = id.find(".");
+			if (id.substr(pos + 1, id.length()) == "tga") {
+				objeto.tCubo.LoadTGA(temp);
+			}
+			else if (id.substr(pos + 1, id.length()) == "bmp") {
+				objeto.tCubo.LoadBMP(temp);
+			}
+			objeto.tCubo.BuildGLTexture();
+			//tCubo.ReleaseImage(); //La verdad no sé porque esta linea rompe el programa pero antes estaba
+			iterGrupos++;
+		}
+		glBegin(GL_POLYGON);
+
+		//Se empieza a dibujar las caras con los datos guarado en el arreglo "vertices" obtenida en cargaObjeto
+		for (iterVertices = 0; iterVertices < objeto.caras[iterCaras].vertice.size(); iterVertices++){
+			if (banderaNormal && !objeto.caras[iterCaras].normal.empty()){
+				glNormal3f(objeto.normales[objeto.caras[iterCaras].normal.front()].x, objeto.normales[objeto.caras[iterCaras].normal.front()].y, objeto.normales[objeto.caras[iterCaras].normal.front()].z);
+				objeto.caras[iterCaras].popNormal();
+			}
+			if (banderaTextura && !objeto.caras[iterCaras].textura.empty()){
+				glTexCoord2f(objeto.texturas[objeto.caras[iterCaras].textura.front() - 1].x, objeto.texturas[objeto.caras[iterCaras].textura.front() - 1].y);
+				objeto.caras[iterCaras].popTextura();
+			}
+			glVertex3f(objeto.vertices[objeto.caras[iterCaras].vertice.front()].x, objeto.vertices[objeto.caras[iterCaras].vertice.front()].y, objeto.vertices[objeto.caras[iterCaras].vertice.front()].z);
+			objeto.caras[iterCaras].popVertice();
+		}
+		glEnd();
+	}
+}
+
+void dibujaWorld(){
+
+	map<string, ModeloObj>::const_iterator itr;
+	//Mostrar escenas guardadas
+	for (itr = mundo.escenas.begin(); itr != mundo.escenas.end(); ++itr){
+		//cout << "ESCENA: Key: " << (*itr).first << " Value: " << (*itr).second.fileName << endl;
+	}
+	//Mostrar objetos guardados
+	for (itr = mundo.objetos.begin(); itr != mundo.objetos.end(); ++itr){
+		//cout << "OBJETO: Key: " << (*itr).first << " Value: " << (*itr).second.fileName << endl;
+	}
+	//Mostrar objetos guardados
+	for (itr = mundo.personajes.begin(); itr != mundo.personajes.end(); ++itr){
+		//cout << "PERSONAJE: Key: " << (*itr).first << " Value: " << (*itr).second.fileName << endl;
+	}
+
+	for (itr = mundo.escenas.begin(); itr != mundo.escenas.end(); ++itr){
+		glPushMatrix();
+		glTranslatef((*itr).second.pX, (*itr).second.pY, (*itr).second.pZ);
+		glRotatef((*itr).second.rX, 1, 0, 0);
+		glRotatef((*itr).second.rY, 0, 1, 0);
+		glRotatef((*itr).second.rZ, 0, 0, 1);
+		glScalef((*itr).second.sX, (*itr).second.sY, (*itr).second.sZ);
+		dibujaObjeto(mundo.escenas[(*itr).first]);
+		glPopMatrix();
+	}
+	for (itr = mundo.objetos.begin(); itr != mundo.objetos.end(); ++itr){
+		glPushMatrix();
+		glTranslatef((*itr).second.pX, (*itr).second.pY, (*itr).second.pZ);
+		glRotatef((*itr).second.rX * 180 / M_PI, 1, 0, 0);
+		glRotatef((*itr).second.rY * 180 / M_PI, 0, 1, 0);
+		glRotatef((*itr).second.rZ * 180 / M_PI, 0, 0, 1);
+		glScalef((*itr).second.sX, (*itr).second.sY, (*itr).second.sZ);
+		dibujaObjeto(mundo.objetos[(*itr).first]);
+		glPopMatrix();
+	}
+	for (itr = mundo.personajes.begin(); itr != mundo.personajes.end(); ++itr){
+		glPushMatrix();
+		glTranslatef((*itr).second.pX, (*itr).second.pY, (*itr).second.pZ);
+		glRotatef((*itr).second.rX, 1, 0, 0);
+		glRotatef((*itr).second.rY, 0, 1, 0);
+		glRotatef((*itr).second.rZ, 0, 0, 1);
+		glScalef((*itr).second.sX, (*itr).second.sY, (*itr).second.sZ);
+		dibujaObjeto(mundo.personajes[(*itr).first]);
+		glPopMatrix();
+	}
+	glPopMatrix();
+}
+
+
 void dibujaReferencia(){
 	glColor3f(1.0f, 0.0f, 0.0f);
 	glutSolidCube(1);
@@ -103,7 +197,7 @@ void display() {
 			case 2:glColor3f(1.0f, 1.0f, 1.0f); break;
 			default:glColor3f(0.8f, 0.8f, 0.8f); break;
 			}
-			escenario.dibujaWorld(banderaTextura, banderaNormal);
+			dibujaWorld();
 			
 	glPopMatrix();
 	glutSwapBuffers();
@@ -112,7 +206,7 @@ void init() {
 	glClearColor(0, 0, 0, 0);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
-	escenario = { NOMBRE_ARCHIVO".wrl" };
+	mundo = { NOMBRE_ARCHIVO".wrl" };
 }
 
 // función que permite interactuar con la escena mediante el teclado
@@ -214,3 +308,4 @@ int main(int argc, char **argv){
 	glutMainLoop();
 	return 0;
 }
+

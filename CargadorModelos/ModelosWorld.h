@@ -1,4 +1,3 @@
-#include < GL/glut.h>
 #include <map>
 #include "ModeloObj.h"
 #define _USE_MATH_DEFINES
@@ -19,6 +18,5 @@ public:
 	ModelosWorld();
 	ModelosWorld(string nombreWorld);
 	~ModelosWorld();
-	void dibujaWorld(bool banderaTextura, bool banderaNormal);
 };
 

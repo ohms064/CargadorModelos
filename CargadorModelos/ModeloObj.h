@@ -5,7 +5,6 @@
 
 #include <string>
 #include <fstream>
-#include < GL/glut.h>
 #include "texture.h"
 #include "Vertice.h"
 #include "Texturas.h"
@@ -59,7 +58,6 @@ public:
 	~ModeloObj();
 
 	int ModeloObj::cargaObjeto();
-	void ModeloObj::dibujaObjeto(bool banderaTextura, bool banderaNormal);
 	void ModeloObj::cargaMaterial(string matName);
 };
 

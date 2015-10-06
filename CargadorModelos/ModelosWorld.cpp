@@ -154,54 +154,6 @@ ModelosWorld::ModelosWorld(string nombreWorld){
 	}
 }
 
-void ModelosWorld::dibujaWorld(bool banderaTextura, bool banderaNormal){
-
-	map<string, ModeloObj>::const_iterator itr;
-	//Mostrar escenas guardadas
-	for (itr = escenas.begin(); itr != escenas.end(); ++itr){
-		//cout << "ESCENA: Key: " << (*itr).first << " Value: " << (*itr).second.fileName << endl;
-	}
-	//Mostrar objetos guardados
-	for (itr = objetos.begin(); itr != objetos.end(); ++itr){
-		//cout << "OBJETO: Key: " << (*itr).first << " Value: " << (*itr).second.fileName << endl;
-	}
-	//Mostrar objetos guardados
-	for (itr = personajes.begin(); itr != personajes.end(); ++itr){
-		//cout << "PERSONAJE: Key: " << (*itr).first << " Value: " << (*itr).second.fileName << endl;
-	}
-
-	for (itr = escenas.begin(); itr != escenas.end(); ++itr){
-		glPushMatrix();
-		glTranslatef((*itr).second.pX, (*itr).second.pY, (*itr).second.pZ);
-		glRotatef((*itr).second.rX, 1, 0, 0);
-		glRotatef((*itr).second.rY, 0, 1, 0);
-		glRotatef((*itr).second.rZ, 0, 0, 1);
-		glScalef((*itr).second.sX, (*itr).second.sY, (*itr).second.sZ);
-		escenas[(*itr).first].dibujaObjeto(banderaTextura, banderaNormal);
-		glPopMatrix();
-	}
-	for (itr = objetos.begin(); itr != objetos.end(); ++itr){
-		glPushMatrix();
-		glTranslatef((*itr).second.pX, (*itr).second.pY, (*itr).second.pZ);
-		glRotatef((*itr).second.rX * 180 / M_PI, 1, 0, 0);
-		glRotatef((*itr).second.rY * 180 / M_PI, 0, 1, 0);
-		glRotatef((*itr).second.rZ * 180 / M_PI, 0, 0, 1);
-		glScalef((*itr).second.sX, (*itr).second.sY, (*itr).second.sZ);
-		objetos[(*itr).first].dibujaObjeto(banderaTextura, banderaNormal);
-		glPopMatrix();
-	}
-	for (itr = personajes.begin(); itr != personajes.end(); ++itr){
-		glPushMatrix();
-		glTranslatef((*itr).second.pX, (*itr).second.pY, (*itr).second.pZ);
-		glRotatef((*itr).second.rX, 1, 0, 0);
-		glRotatef((*itr).second.rY, 0, 1, 0);
-		glRotatef((*itr).second.rZ, 0, 0, 1);
-		glScalef((*itr).second.sX, (*itr).second.sY, (*itr).second.sZ);
-		personajes[(*itr).first].dibujaObjeto(banderaTextura, banderaNormal);
-		glPopMatrix();
-	}
-	glPopMatrix();
-}
 
 ModelosWorld::~ModelosWorld()
 {
