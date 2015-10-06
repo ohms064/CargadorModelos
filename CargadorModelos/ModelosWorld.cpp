@@ -40,7 +40,7 @@ ModelosWorld::ModelosWorld(string nombreWorld){
 					nombre_modelo = linea.substr(linea.find(" ") + 1);
 					nombre_instancia = nombre_modelo.substr(nombre_modelo.find(" ") + 1);
 
-					cout << "Creando instancia del modelo: " << nombre_modelo << " " << nombre_instancia << endl;
+					cout << "Creando instancia del modelo: " << nombre_modelo << endl;
 
 					//Creo es innecesario esta parte, sólo falta no sumarle 1 en las instrucciones anteriores
 					nombre_modelo = nombre_modelo.substr(0, nombre_modelo.find(" "));

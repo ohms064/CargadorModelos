@@ -65,15 +65,16 @@ void reshape(int width, int height) {
 
 
 void dibujaObjeto(ModeloObj objeto){
+	/*
+	Recibe un ModeloObj y lo dibujará en escena
+	*/
 	int iterCaras = 0;
 	int iterVertices = 0;
 	int iterGrupos = 0;
-	static int imprime = 0;
 	char* temp; //Utilicé un char* porque CTexture recibe valores de este tipo
 	string id;
-	//cout << "Caras: " << iterCaras << " Grupos: " << iterGrupos << endl;
 	for (iterCaras = 0; iterCaras < objeto.numCaras; iterCaras++){
-		if (banderaTextura && iterCaras == objeto.grupos[iterGrupos].inicio){
+		if (banderaTextura && iterCaras == objeto.grupos[iterGrupos].inicio && iterGrupos < objeto.numGrupos){
 			id = objeto.materiales[objeto.grupos[iterGrupos].tex].mapKd; //Obtenemos la textura
 			temp = new char[id.size()]; //Obtenemos el tamaño del nombre de la textura
 			strcpy(temp, id.c_str()); //Debemos copiar el c_str porque c_str retorna un apuntador
@@ -85,7 +86,7 @@ void dibujaObjeto(ModeloObj objeto){
 				objeto.tCubo.LoadBMP(temp);
 			}
 			objeto.tCubo.BuildGLTexture();
-			//tCubo.ReleaseImage(); //La verdad no sé porque esta linea rompe el programa pero antes estaba
+			objeto.tCubo.ReleaseImage(); 
 			iterGrupos++;
 		}
 		glBegin(GL_POLYGON);
@@ -108,22 +109,13 @@ void dibujaObjeto(ModeloObj objeto){
 }
 
 void dibujaWorld(){
-
+	/*
+	Aquí se manda a llamar al objeto mundo para dibujarse.
+	Obtiene los objetos para dibujarlos posteriormente con la función dibujaObjeto.
+	*/
 	map<string, ModeloObj>::const_iterator itr;
-	//Mostrar escenas guardadas
-	for (itr = mundo.escenas.begin(); itr != mundo.escenas.end(); ++itr){
-		//cout << "ESCENA: Key: " << (*itr).first << " Value: " << (*itr).second.fileName << endl;
-	}
-	//Mostrar objetos guardados
-	for (itr = mundo.objetos.begin(); itr != mundo.objetos.end(); ++itr){
-		//cout << "OBJETO: Key: " << (*itr).first << " Value: " << (*itr).second.fileName << endl;
-	}
-	//Mostrar objetos guardados
-	for (itr = mundo.personajes.begin(); itr != mundo.personajes.end(); ++itr){
-		//cout << "PERSONAJE: Key: " << (*itr).first << " Value: " << (*itr).second.fileName << endl;
-	}
 
-	for (itr = mundo.escenas.begin(); itr != mundo.escenas.end(); ++itr){
+	for (itr = mundo.escenas.begin(); itr != mundo.escenas.end(); ++itr){//Se transforman y dibuan escenas.
 		glPushMatrix();
 		glTranslatef((*itr).second.pX, (*itr).second.pY, (*itr).second.pZ);
 		glRotatef((*itr).second.rX, 1, 0, 0);
@@ -133,7 +125,7 @@ void dibujaWorld(){
 		dibujaObjeto(mundo.escenas[(*itr).first]);
 		glPopMatrix();
 	}
-	for (itr = mundo.objetos.begin(); itr != mundo.objetos.end(); ++itr){
+	for (itr = mundo.objetos.begin(); itr != mundo.objetos.end(); ++itr){//Se transforman y dibujan los objetos.
 		glPushMatrix();
 		glTranslatef((*itr).second.pX, (*itr).second.pY, (*itr).second.pZ);
 		glRotatef((*itr).second.rX * 180 / M_PI, 1, 0, 0);
@@ -143,7 +135,7 @@ void dibujaWorld(){
 		dibujaObjeto(mundo.objetos[(*itr).first]);
 		glPopMatrix();
 	}
-	for (itr = mundo.personajes.begin(); itr != mundo.personajes.end(); ++itr){
+	for (itr = mundo.personajes.begin(); itr != mundo.personajes.end(); ++itr){//Se transforman y dibujan los personajes.
 		glPushMatrix();
 		glTranslatef((*itr).second.pX, (*itr).second.pY, (*itr).second.pZ);
 		glRotatef((*itr).second.rX, 1, 0, 0);
@@ -156,16 +148,6 @@ void dibujaWorld(){
 	glPopMatrix();
 }
 
-
-void dibujaReferencia(){
-	glColor3f(1.0f, 0.0f, 0.0f);
-	glutSolidCube(1);
-}
-void dibujoPiso(){
-	glColor3f(0.3f, 0.3f, 1.0f);
-	glScalef(5.0f, 0.2f, 5.0f);
-	glutSolidCube(1);
-}
 void animation(){
 	if (gira){
 		if (anguloRotacionObjeto<360){
