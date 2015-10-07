@@ -87,6 +87,10 @@ void dibujaObjeto(ModeloObj objeto){
 			}
 			objeto.tCubo.BuildGLTexture();
 			objeto.tCubo.ReleaseImage(); 
+			glMaterialfv(GL_FRONT, GL_AMBIENT, objeto.materiales[objeto.grupos[iterGrupos].tex].Ka);
+			glMaterialfv(GL_FRONT, GL_DIFFUSE, objeto.materiales[objeto.grupos[iterGrupos].tex].Kd);
+			glMaterialfv(GL_FRONT, GL_SPECULAR, objeto.materiales[objeto.grupos[iterGrupos].tex].Ks);
+			//glMaterialfv(GL_FRONT, GL_SHININESS, objeto.materiales[objeto.grupos[iterGrupos].tex].Ns);
 			iterGrupos++;
 		}
 		glBegin(GL_POLYGON);

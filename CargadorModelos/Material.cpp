@@ -1,12 +1,24 @@
 #include "Material.h"
 
 
-Material::Material()
-{
+Material::Material(){
+	/*Opengl recibe estos valores como RGBA y por default como (0,0,0,1) por eso se inicializan así, 
+		aunque nunca volvemos a usar alfa en el programa*/
+	Ka[0] = 0.0f;
+	Ka[1] = 0.0f;
+	Ka[2] = 0.0f;
+	Ka[3] = 1.0f;
+	Ks[0] = 0.0f;
+	Ks[1] = 0.0f;
+	Ks[2] = 0.0f;
+	Ks[3] = 1.0f;
+	Kd[0] = 0.8f;
+	Kd[1] = 0.8f;
+	Kd[2] = 0.8f;
+	Kd[3] = 1.0f;
 }
 
-Material::~Material()
-{
+Material::~Material(){
 }
 
 void Material::setKa(string buffer){

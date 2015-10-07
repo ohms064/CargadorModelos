@@ -212,6 +212,9 @@ void ModeloObj::cargaMaterial(string matName){
 		}
 		else if (id == "d"){
 			temporal.d = stof(linea);
+			temporal.Ks[3] = temporal.d;
+			temporal.Kd[3] = temporal.d;
+			temporal.Ka[3] = temporal.d;
 		}
 		else if (id == "illum"){
 			temporal.illum = stoi(linea);
