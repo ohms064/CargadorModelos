@@ -67,7 +67,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Documents\Visual Studio 2013\Projects\Entorno\Entorno\Camera.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cara.cpp" />
     <ClCompile Include="Grupo.cpp" />
     <ClCompile Include="main.cpp" />
@@ -80,7 +80,7 @@
     <ClCompile Include="Vertice.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Documents\Visual Studio 2013\Projects\Entorno\Entorno\Camera.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Cara.h" />
     <ClInclude Include="Grupo.h" />
     <ClInclude Include="Material.h" />
