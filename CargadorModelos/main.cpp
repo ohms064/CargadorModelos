@@ -20,13 +20,14 @@ using namespace std;
 //---------------------------------
 ModelosWorld mundo;
 
-GLfloat posObjeto = -5.0f;
+GLfloat posObjeto = -2.0f;
 GLfloat anguloCamaraY = 0.0f;
 GLfloat anguloCamaraX = 0.0f;
 GLfloat anguloCamaraZ = 0.0f;
 GLfloat anguloCamara2Z = 0.0f;
 
 bool gira = true;
+int arc = 0;
 int color = 0;
 float anguloRotacionObjeto = 0;
 float velocidadRotacion = 1;
@@ -215,8 +216,17 @@ void keyboard(unsigned char key, int x, int y){
 	}
 	else{
 		switch (key) {
-		case '+':posCamPieZ--; display(); break;
-		case '-':posCamPieZ++; display(); break;
+		
+			//Implementando Arcball
+		case 'q':
+			//incremento arc para realizar Arcball colocando la camara en radio 1 del modelo y deniego el movimiento hacia arriba y hacia abajo
+			arc = 1;
+			posCamPieZ = 2;
+			break;
+		case 'e':
+			//incremento arc para realizar Arcball colocando la camara en radio 1 del modelo y deniego el movimiento hacia arriba y hacia abajo
+			arc = 0;
+			break;
 		case '1':
 			banderaTextura = !banderaTextura; 
 			cout << "Textura: " << banderaTextura << endl;
@@ -227,6 +237,43 @@ void keyboard(unsigned char key, int x, int y){
 			cout << "Normal: " << banderaNormal << endl;
 			display(); 
 			break;
+		case 'w':
+			if (arc == 0){
+				posCamPieZ--;
+			}
+			else{
+				posCamPieZ = 1;
+			}
+
+			display(); break;
+		case 's':
+			if (arc == 0){
+				posCamPieZ++;
+			}
+			else{
+				posCamPieZ = 1;
+			}
+			display(); break;
+		case 'd':
+			if (arc == 0){
+				upCamPieX--;
+				//posCamPieX--;
+			}
+			else{
+				posCamPieX = 1;
+			}
+
+			display(); break;
+		case 'a':
+			if (arc == 0){
+				upCamPieX++;
+				//posCamPieX++;
+			}
+			else{
+				posCamPieX = 1;
+			}
+			display(); break;
+
 		/*case '3': //Todavía no se usa
 			banderaMtl = !banderaMtl, display();
 			cout << "Mtl: " << banderaMtl << endl;
@@ -255,13 +302,23 @@ void specialKeys(int key, int x, int y) {
 		break;
 		// ROTAR CAMARA HACIA ARRIBA
 	case GLUT_KEY_UP:
-		anguloCamaraX += VELOCIDAD;
-		display();
+		if (arc==0){
+			anguloCamaraX += VELOCIDAD;
+			display();
+		}//Aqui deniego el movimiento de la camara hacia arriba
+		else {
+			anguloCamaraX==0;
+		}
 		break;
 		// ROTAR CAMARA HACIA ABAJO
 	case GLUT_KEY_DOWN:
-		anguloCamaraX -= VELOCIDAD;
-		display();
+		if (arc == 0){
+			anguloCamaraX -= VELOCIDAD;
+			display();
+		}//Aqui deniego el movimiento de la camara hacia abajo
+		else {
+			anguloCamaraX == 0;
+		}
 		break;
 	case GLUT_KEY_F1:
 		velocidadRotacion += 0.5;
@@ -270,6 +327,9 @@ void specialKeys(int key, int x, int y) {
 		velocidadRotacion -= 0.5;
 		break;
 	}
+}
+
+void Arcball(){
 }
 
 void mouse(int button, int state, int x, int y){

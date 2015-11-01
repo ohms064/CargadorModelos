@@ -87,8 +87,10 @@
     <ClInclude Include="ModeloObj.h" />
     <ClInclude Include="ModelosWorld.h" />
     <ClInclude Include="Normal.h" />
+    <ClInclude Include="PruebaCam.h" />
     <ClInclude Include="Texturas.h" />
     <ClInclude Include="texture.h" />
+    <ClInclude Include="Vector.h" />
     <ClInclude Include="Vertice.h" />
   </ItemGroup>
   <ItemGroup>
