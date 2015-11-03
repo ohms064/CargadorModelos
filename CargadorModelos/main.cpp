@@ -257,7 +257,9 @@ void keyboard(unsigned char key, int x, int y){
 		case 'd':
 			if (arc == 0){
 				upCamPieX--;
+				viewCamPieX--;
 				//posCamPieX--;
+
 			}
 			else{
 				posCamPieX = 1;
@@ -267,6 +269,7 @@ void keyboard(unsigned char key, int x, int y){
 		case 'a':
 			if (arc == 0){
 				upCamPieX++;
+				viewCamPieX++;
 				//posCamPieX++;
 			}
 			else{
