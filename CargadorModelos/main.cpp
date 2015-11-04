@@ -307,24 +307,28 @@ void specialKeys(int key, int x, int y) {
 		case GLUT_KEY_RIGHT:
 			lat++;
 			c[cam].anguloCamaraY += VELOCIDAD_ROT;
+			c[cam].posCamPieX = sphere2X(mag, lat, lon);
 			display();
 			break;
 			// ROTAR CAMARA LA IZQUIERDA
 		case GLUT_KEY_LEFT:
 			lat--;
-			c[cam].anguloCamaraY -= VELOCIDAD_ROT;
+			//c[cam].anguloCamaraY -= VELOCIDAD_ROT;
+			c[cam].posCamPieX = sphere2X(mag, lat, lon);
 			display();
 			break;
 			// ROTAR CAMARA HACIA ARRIBA
 		case GLUT_KEY_UP:
 			lon++;
-			c[cam].anguloCamaraX += VELOCIDAD_ROT;
+			//c[cam].anguloCamaraX += VELOCIDAD_ROT;
+			c[cam].posCamPieY = sphere2Y(mag, lat);
 			display();
 			break;
 			// ROTAR CAMARA HACIA ABAJO
 		case GLUT_KEY_DOWN:
 			lon--;
-			c[cam].anguloCamaraX -= VELOCIDAD_ROT;
+			//c[cam].anguloCamaraX -= VELOCIDAD_ROT;
+			c[cam].posCamPieY = sphere2Y(mag, lat);
 			display();
 			break;
 		case GLUT_KEY_F1:
