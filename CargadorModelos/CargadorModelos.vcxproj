@@ -67,6 +67,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cara.cpp" />
     <ClCompile Include="Grupo.cpp" />
     <ClCompile Include="main.cpp" />
@@ -79,6 +80,7 @@
     <ClCompile Include="Vertice.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Cara.h" />
     <ClInclude Include="Grupo.h" />
     <ClInclude Include="Material.h" />

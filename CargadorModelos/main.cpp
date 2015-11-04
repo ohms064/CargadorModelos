@@ -10,39 +10,25 @@
 #include <string>
 #include "ModeloObj.h"
 #include "ModelosWorld.h"
+#include "Camera.h"
 #include <map>
 
 
 using namespace std;
-#define VELOCIDAD 5;
+#define VELOCIDAD_ROT 5;
+#define VELOCIDAD_MOV 0.1f;
 // Poner aquí el nombre del archivo sin el .obj, es muy importante que el archivo exista
 #define NOMBRE_ARCHIVO "archivo"
 //---------------------------------
 ModelosWorld mundo;
 
-GLfloat posObjeto = -5.0f;
-GLfloat anguloCamaraY = 0.0f;
-GLfloat anguloCamaraX = 0.0f;
-GLfloat anguloCamaraZ = 0.0f;
-GLfloat anguloCamara2Z = 0.0f;
 
 bool gira = true;
 int color = 0;
 float anguloRotacionObjeto = 0;
 float velocidadRotacion = 1;
 
-float miradaAPieY = 0.0f;
-float posCamPieX = 0.0f;
-float posCamPieY = 0.0f;
-float posCamPieZ = 20.0f;
-
-float viewCamPieX = 0;
-float viewCamPieY = miradaAPieY;
-float viewCamPieZ = 0;
-
-float upCamPieX = 0;
-float upCamPieY = 1;
-float upCamPieZ = 0;
+Camera c[3];
 
 bool banderaTextura = true;
 bool banderaNormal = true;
@@ -169,15 +155,15 @@ void display() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt(posCamPieX, posCamPieY, posCamPieZ, viewCamPieX, viewCamPieY, viewCamPieZ, upCamPieX, upCamPieY, upCamPieZ);
+	gluLookAt(c[cam].posCamPieX, c[cam].posCamPieY, c[cam].posCamPieZ, c[cam].viewCamPieX, c[cam].viewCamPieY, c[cam].viewCamPieZ, c[cam].upCamPieX, c[cam].upCamPieY, c[cam].upCamPieZ);
 	////////////////////////////////////////////
 	// movimiento y posicionamiento de la camara.
 	////////////////////////////////////////////
 	glPushMatrix();
 		// eje horizontal.
-		glRotatef(anguloCamaraY, 0.0f, 1.0f, 0.0f);
+		glRotatef(c[cam].anguloCamaraY, 0.0f, 1.0f, 0.0f);
 		// eje vertical.
-		glRotatef(anguloCamaraX, 1.0f, 0.0f, 0.0f);
+		glRotatef(c[cam].anguloCamaraX, 1.0f, 0.0f, 0.0f);
 		glPushMatrix();
 			switch (color){
 			case 1:glColor3f(0.2f, 0.2f, 0.2f); break;
@@ -190,7 +176,6 @@ void display() {
 	glutSwapBuffers();
 }
 void init() {
-	cam = libre;
 	glClearColor(0, 0, 0, 0);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
@@ -217,8 +202,8 @@ void keyboard(unsigned char key, int x, int y){
 	}
 	else{
 		switch (key) {
-		case '+':posCamPieZ--; display(); break;
-		case '-':posCamPieZ++; display(); break;
+		//case '+':posCamPieZ--; display(); break;
+		//case '-':posCamPieZ++; display(); break;
 		case '1':
 			banderaTextura = !banderaTextura; 
 			cout << "Textura: " << banderaTextura << endl;
@@ -239,14 +224,17 @@ void keyboard(unsigned char key, int x, int y){
 			case libre:
 				cout << "Camara: Pies Sobre la Tierra" << endl;
 				cam = piesSobreTierra;
+				display();
 				break;
 			case piesSobreTierra:
 				cout << "Camara: Arcball" << endl;
 				cam = arcball;
+				display();
 				break;
 			case arcball:
 				cout << "Camara: Libre" << endl;
 				cam = libre;
+				display();
 				break;
 			}
 		case '4':color = 1; display(); break;
@@ -260,26 +248,26 @@ void keyboard(unsigned char key, int x, int y){
 // función que permite interactuar con la escena mediante el teclado
 void specialKeys(int key, int x, int y) {
 	switch (cam){
-	case (libre):
+	case (arcball):
 		switch (key) {
 			// ROTAR CAMARA LA DERECHA
 		case GLUT_KEY_RIGHT:
-			anguloCamaraY += VELOCIDAD;
+			c[cam].anguloCamaraY += VELOCIDAD_ROT;
 			display();
 			break;
 			// ROTAR CAMARA LA IZQUIERDA
 		case GLUT_KEY_LEFT:
-			anguloCamaraY -= VELOCIDAD;
+			c[cam].anguloCamaraY -= VELOCIDAD_ROT;
 			display();
 			break;
 			// ROTAR CAMARA HACIA ARRIBA
 		case GLUT_KEY_UP:
-			anguloCamaraX += VELOCIDAD;
+			c[cam].anguloCamaraX += VELOCIDAD_ROT;
 			display();
 			break;
 			// ROTAR CAMARA HACIA ABAJO
 		case GLUT_KEY_DOWN:
-			anguloCamaraX -= VELOCIDAD;
+			c[cam].anguloCamaraX -= VELOCIDAD_ROT;
 			display();
 			break;
 		case GLUT_KEY_F1:
@@ -288,11 +276,63 @@ void specialKeys(int key, int x, int y) {
 		case GLUT_KEY_F2:
 			velocidadRotacion -= 0.5;
 			break;
+		case GLUT_KEY_PAGE_UP:
+			c[cam].posCamPieZ --;
+			display();
+			break;
+		case GLUT_KEY_PAGE_DOWN:
+			c[cam].posCamPieZ ++;
+			display();
+			break;
+		}
+		break;
+	case libre:
+		switch (key) {
+		case GLUT_KEY_LEFT:
+			c[cam].viewCamPieX -= VELOCIDAD_MOV;
+			display();
+			break;
+		case GLUT_KEY_RIGHT:
+			c[cam].viewCamPieX += VELOCIDAD_MOV;
+			display();
+			break;
+		case GLUT_KEY_UP:
+			c[cam].viewCamPieY += VELOCIDAD_MOV;
+			display();
+			break;
+		case GLUT_KEY_DOWN:
+			c[cam].viewCamPieY -= VELOCIDAD_MOV;
+			display();
+			break;
+		case GLUT_KEY_PAGE_UP:
+			c[cam].posCamPieZ --;
+			display();
+			break;
+		case GLUT_KEY_PAGE_DOWN:
+			c[cam].posCamPieZ ++;
+			display();
+			break;
 		}
 		break;
 	case piesSobreTierra:
-		break;
-	case arcball:
+		switch (key) {
+		case GLUT_KEY_LEFT:
+			c[cam].viewCamPieX -= VELOCIDAD_MOV;
+			display();
+			break;
+		case GLUT_KEY_RIGHT:
+			c[cam].viewCamPieX += VELOCIDAD_MOV;
+			display();
+			break;
+		case GLUT_KEY_PAGE_UP:
+			c[cam].posCamPieZ --;
+			display();
+			break;
+		case GLUT_KEY_PAGE_DOWN:
+			c[cam].posCamPieZ ++;
+			display();
+			break;
+		}
 		break;
 	}
 	
@@ -305,6 +345,8 @@ void mouse(int button, int state, int x, int y){
 }
 
 int main(int argc, char **argv){
+	cam = libre;
+	cout << "Camara: Libre" << endl;
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowPosition(100, 100);

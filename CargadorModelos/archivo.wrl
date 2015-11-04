@@ -3,22 +3,15 @@
 
 #carga de modelos
 <modelo link ./link.obj>
-<modelo tux ./Tux2.obj>
+
 
 #creando instancias de los modelos
 <objeto link link_1>
-<objeto tux tux_1>
-<objeto tux tux_2>
+
 
 #aplicando transformaciones basicas
 <posicion link_1 0.0 0.0 0.0>
 <escalamiento link_1 0.5 0.5 0.5>
-<posicion tux_1 1.0 0.0 0.0>
-<posicion tux_2 0.0 1.0 0.0>
-<escalamiento tux_1 1.0 1.0 1.0>
-<escalamiento tux_2 0.5 0.5 0.5>
-<rotacion tux_1 0.0 0.0 1.0>
-
 
 #NOTA las rotaciones son en radianes en el standar, pero si lo dejaron en grados no hay problema
 #conversion de grados a radianes
