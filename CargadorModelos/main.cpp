@@ -48,6 +48,7 @@ bool banderaTextura = true;
 bool banderaNormal = true;
 bool banderaMtl = true;
 
+enum camara {libre, piesSobreTierra, arcball} cam;
 
 void reshape(int width, int height) {
 	glViewport(0, 0, width, height);
@@ -189,6 +190,7 @@ void display() {
 	glutSwapBuffers();
 }
 void init() {
+	cam = libre;
 	glClearColor(0, 0, 0, 0);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
@@ -232,6 +234,21 @@ void keyboard(unsigned char key, int x, int y){
 			cout << "Mtl: " << banderaMtl << endl;
 			display();
 			break;*/
+		case 's':
+			switch (cam){
+			case libre:
+				cout << "Camara: Pies Sobre la Tierra" << endl;
+				cam = piesSobreTierra;
+				break;
+			case piesSobreTierra:
+				cout << "Camara: Arcball" << endl;
+				cam = arcball;
+				break;
+			case arcball:
+				cout << "Camara: Libre" << endl;
+				cam = libre;
+				break;
+			}
 		case '4':color = 1; display(); break;
 		case '5':color = 2; display(); break;
 		case '6':color = 3; display(); break;
@@ -242,34 +259,43 @@ void keyboard(unsigned char key, int x, int y){
 
 // función que permite interactuar con la escena mediante el teclado
 void specialKeys(int key, int x, int y) {
-	switch (key) {
-		// ROTAR CAMARA LA DERECHA
-	case GLUT_KEY_RIGHT:
-		anguloCamaraY += VELOCIDAD;
-		display();
+	switch (cam){
+	case (libre):
+		switch (key) {
+			// ROTAR CAMARA LA DERECHA
+		case GLUT_KEY_RIGHT:
+			anguloCamaraY += VELOCIDAD;
+			display();
+			break;
+			// ROTAR CAMARA LA IZQUIERDA
+		case GLUT_KEY_LEFT:
+			anguloCamaraY -= VELOCIDAD;
+			display();
+			break;
+			// ROTAR CAMARA HACIA ARRIBA
+		case GLUT_KEY_UP:
+			anguloCamaraX += VELOCIDAD;
+			display();
+			break;
+			// ROTAR CAMARA HACIA ABAJO
+		case GLUT_KEY_DOWN:
+			anguloCamaraX -= VELOCIDAD;
+			display();
+			break;
+		case GLUT_KEY_F1:
+			velocidadRotacion += 0.5;
+			break;
+		case GLUT_KEY_F2:
+			velocidadRotacion -= 0.5;
+			break;
+		}
 		break;
-		// ROTAR CAMARA LA IZQUIERDA
-	case GLUT_KEY_LEFT:
-		anguloCamaraY -= VELOCIDAD;
-		display();
+	case piesSobreTierra:
 		break;
-		// ROTAR CAMARA HACIA ARRIBA
-	case GLUT_KEY_UP:
-		anguloCamaraX += VELOCIDAD;
-		display();
-		break;
-		// ROTAR CAMARA HACIA ABAJO
-	case GLUT_KEY_DOWN:
-		anguloCamaraX -= VELOCIDAD;
-		display();
-		break;
-	case GLUT_KEY_F1:
-		velocidadRotacion += 0.5;
-		break;
-	case GLUT_KEY_F2:
-		velocidadRotacion -= 0.5;
+	case arcball:
 		break;
 	}
+	
 }
 
 void mouse(int button, int state, int x, int y){
