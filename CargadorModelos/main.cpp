@@ -188,15 +188,15 @@ void init() {
 }
 
 float sphere2X(float magnitude, float latitude, float longitude) {
-	return magnitude *cos(latitude) * cos(longitude);
+	return magnitude *cos(latitude * M_PI / 180.0f) * cos(longitude * M_PI / 180.0f);
 }
 
 float sphere2Y(float magnitude, float latitude) {
-	return magnitude * sin(latitude);
+	return magnitude * sin(latitude * M_PI / 180.0f);
 }
 
 float sphere2Z(float magnitude, float latitude, float longitude) {
-	return magnitude *cos(latitude) * sin(longitude);
+	return magnitude *cos(latitude * M_PI / 180.0f) * sin(longitude * M_PI / 180.0f);
 }
 
 float xyz2Magnitude(float x, float y, float z) {
@@ -305,30 +305,38 @@ void specialKeys(int key, int x, int y) {
 		switch (key) {
 			// ROTAR CAMARA LA DERECHA
 		case GLUT_KEY_RIGHT:
-			lat++;
-			c[cam].anguloCamaraY += VELOCIDAD_ROT;
+			lon += VELOCIDAD_ROT;
+			//c[cam].anguloCamaraY += VELOCIDAD_ROT;
 			c[cam].posCamPieX = sphere2X(mag, lat, lon);
+			c[cam].posCamPieY = sphere2Y(mag, lat);
+			c[cam].posCamPieZ = sphere2Z(mag, lat, lon);
 			display();
 			break;
 			// ROTAR CAMARA LA IZQUIERDA
 		case GLUT_KEY_LEFT:
-			lat--;
+			lon -= VELOCIDAD_ROT;
 			//c[cam].anguloCamaraY -= VELOCIDAD_ROT;
 			c[cam].posCamPieX = sphere2X(mag, lat, lon);
+			c[cam].posCamPieY = sphere2Y(mag, lat);
+			c[cam].posCamPieZ = sphere2Z(mag, lat, lon);
 			display();
 			break;
 			// ROTAR CAMARA HACIA ARRIBA
 		case GLUT_KEY_UP:
-			lon++;
+			lat += VELOCIDAD_ROT;
 			//c[cam].anguloCamaraX += VELOCIDAD_ROT;
+			c[cam].posCamPieX = sphere2X(mag, lat, lon);
 			c[cam].posCamPieY = sphere2Y(mag, lat);
+			c[cam].posCamPieZ = sphere2Z(mag, lat, lon);
 			display();
 			break;
 			// ROTAR CAMARA HACIA ABAJO
 		case GLUT_KEY_DOWN:
-			lon--;
+			lat -= VELOCIDAD_ROT;
 			//c[cam].anguloCamaraX -= VELOCIDAD_ROT;
+			c[cam].posCamPieX = sphere2X(mag, lat, lon);
 			c[cam].posCamPieY = sphere2Y(mag, lat);
+			c[cam].posCamPieZ = sphere2Z(mag, lat, lon);
 			display();
 			break;
 		case GLUT_KEY_F1:
