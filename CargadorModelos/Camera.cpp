@@ -9,7 +9,7 @@ Camera::Camera(){
 	miradaAPieY = 0.0f;
 	posCamPieX = 0.0f;
 	posCamPieY = 0.0f;
-	posCamPieZ = 20.0f;
+	posCamPieZ = 10.0f;
 
 	viewCamPieX = 0.0f;
 	viewCamPieY = 0.0f;

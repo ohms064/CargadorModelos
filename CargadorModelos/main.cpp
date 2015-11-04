@@ -12,7 +12,7 @@
 #include "ModelosWorld.h"
 #include "Camera.h"
 #include <map>
-
+#include <math.h>
 
 using namespace std;
 #define VELOCIDAD_ROT 5;
@@ -22,13 +22,16 @@ using namespace std;
 //---------------------------------
 ModelosWorld mundo;
 
-
 bool gira = true;
 int color = 0;
 float anguloRotacionObjeto = 0;
 float velocidadRotacion = 1;
 
 Camera c[3];
+//Las siguientes variables son para manejar un sistema de coordenadas esféricas
+float lon = 0.0f;
+float lat = 0.0f;
+float mag = 0.0f;
 
 bool banderaTextura = true;
 bool banderaNormal = true;
@@ -180,7 +183,52 @@ void init() {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 	mundo = { NOMBRE_ARCHIVO".wrl" };
+	cam = libre;
+	cout << "Camara: Libre" << endl;
 }
+
+float sphere2X(float magnitude, float latitude, float longitude) {
+	return magnitude *cos(latitude) * cos(longitude);
+}
+
+float sphere2Y(float magnitude, float latitude) {
+	return magnitude * sin(latitude);
+}
+
+float sphere2Z(float magnitude, float latitude, float longitude) {
+	return magnitude *cos(latitude) * sin(longitude);
+}
+
+float xyz2Magnitude(float x, float y, float z) {
+	return sqrt(pow(x, 2.0f) + pow(y, 2.0f) + pow(z, 2.0f));	
+}
+
+float xyz2Latitude(float y, float magnitude) {
+	if (magnitude == 0) {
+		return 100;
+	}
+	return asin(y / magnitude);
+}
+
+float xyz2Longitude(float x, float y, float z) {
+	float longitude = 0.0f;
+	if (x == 0.0f) {
+		if (z == 0.0f) {
+			longitude = 0.0f;
+		}
+		else if (z > 0.0f) {
+			longitude = 90.0f;
+		}
+		else {
+			longitude = -90.0f;
+		}
+	}
+	else {
+		longitude = atan(z / x);
+	}
+	return longitude;
+}
+
 
 // función que permite interactuar con la escena mediante el teclado
 void keyboard(unsigned char key, int x, int y){
@@ -229,6 +277,11 @@ void keyboard(unsigned char key, int x, int y){
 			case piesSobreTierra:
 				cout << "Camara: Arcball" << endl;
 				cam = arcball;
+				//Las variables de la esfera
+				mag = xyz2Magnitude(c[cam].viewCamPieX, c[cam].viewCamPieY, c[cam].posCamPieZ);
+				lon = xyz2Longitude(c[cam].viewCamPieX, c[cam].viewCamPieY, c[cam].posCamPieZ);
+				lat = xyz2Latitude(c[cam].viewCamPieY, mag);
+
 				display();
 				break;
 			case arcball:
@@ -252,21 +305,25 @@ void specialKeys(int key, int x, int y) {
 		switch (key) {
 			// ROTAR CAMARA LA DERECHA
 		case GLUT_KEY_RIGHT:
+			lat++;
 			c[cam].anguloCamaraY += VELOCIDAD_ROT;
 			display();
 			break;
 			// ROTAR CAMARA LA IZQUIERDA
 		case GLUT_KEY_LEFT:
+			lat--;
 			c[cam].anguloCamaraY -= VELOCIDAD_ROT;
 			display();
 			break;
 			// ROTAR CAMARA HACIA ARRIBA
 		case GLUT_KEY_UP:
+			lon++;
 			c[cam].anguloCamaraX += VELOCIDAD_ROT;
 			display();
 			break;
 			// ROTAR CAMARA HACIA ABAJO
 		case GLUT_KEY_DOWN:
+			lon--;
 			c[cam].anguloCamaraX -= VELOCIDAD_ROT;
 			display();
 			break;
@@ -345,8 +402,6 @@ void mouse(int button, int state, int x, int y){
 }
 
 int main(int argc, char **argv){
-	cam = libre;
-	cout << "Camara: Libre" << endl;
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowPosition(100, 100);
