@@ -15,8 +15,8 @@
 #include <math.h>
 
 using namespace std;
-#define VELOCIDAD_ROT 5;
-#define VELOCIDAD_MOV 0.1f;
+#define VELOCIDAD_ROT 5
+#define VELOCIDAD_MOV 0.1f
 // Poner aquí el nombre del archivo sin el .obj, es muy importante que el archivo exista
 #define NOMBRE_ARCHIVO "archivo"
 //---------------------------------
@@ -32,6 +32,10 @@ Camera c[3];
 float lon = 0.0f;
 float lat = 0.0f;
 float mag = 0.0f;
+float inclinacionX = 0.0f;
+float inclinacionY = 0.0f;
+float inclinacionZ = 0.0f;
+float hipXY = 0.0f, hipZY = 0.0f, hipXZ = 0.0f;
 
 bool banderaTextura = true;
 bool banderaNormal = true;
@@ -64,7 +68,7 @@ void dibujaObjeto(ModeloObj objeto){
 	char* temp; //Utilicé un char* porque CTexture recibe valores de este tipo
 	string id;
 	for (iterCaras = 0; iterCaras < objeto.numCaras; iterCaras++){
-		if (banderaTextura && iterCaras == objeto.grupos[iterGrupos].inicio && iterGrupos < objeto.numGrupos){
+		if (banderaMtl && iterCaras == objeto.grupos[iterGrupos].inicio && iterGrupos < objeto.numGrupos){
 			id = objeto.materiales[objeto.grupos[iterGrupos].tex].mapKd; //Obtenemos la textura
 			temp = new char[id.size()]; //Obtenemos el tamaño del nombre de la textura
 			strcpy(temp, id.c_str()); //Debemos copiar el c_str porque c_str retorna un apuntador
@@ -77,11 +81,13 @@ void dibujaObjeto(ModeloObj objeto){
 			}
 			objeto.tCubo.BuildGLTexture();
 			objeto.tCubo.ReleaseImage(); 
+			iterGrupos++;
+		}
+		if (banderaTextura && iterCaras == objeto.grupos[iterGrupos].inicio && iterGrupos < objeto.numGrupos) {
 			glMaterialfv(GL_FRONT, GL_AMBIENT, objeto.materiales[objeto.grupos[iterGrupos].tex].Ka);
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, objeto.materiales[objeto.grupos[iterGrupos].tex].Kd);
 			glMaterialfv(GL_FRONT, GL_SPECULAR, objeto.materiales[objeto.grupos[iterGrupos].tex].Ks);
-			//glMaterialfv(GL_FRONT, GL_SHININESS, objeto.materiales[objeto.grupos[iterGrupos].tex].Ns);
-			iterGrupos++;
+			glMaterialf(GL_FRONT, GL_SHININESS, objeto.materiales[objeto.grupos[iterGrupos].tex].Ns);
 		}
 		glBegin(GL_POLYGON);
 
@@ -178,10 +184,14 @@ void display() {
 	glPopMatrix();
 	glutSwapBuffers();
 }
+
 void init() {
 	glClearColor(0, 0, 0, 0);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_NORMALIZE);
+	glShadeModel(GL_SMOOTH);
+	glEnable(GL_CULL_FACE);
 	mundo = { NOMBRE_ARCHIVO".wrl" };
 	cam = libre;
 	cout << "Camara: Libre" << endl;
@@ -259,19 +269,22 @@ void keyboard(unsigned char key, int x, int y){
 			break;
 		case '2':
 			banderaNormal = !banderaNormal;
+			banderaNormal ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
 			cout << "Normal: " << banderaNormal << endl;
 			display(); 
 			break;
-		/*case '3': //Todavía no se usa
-			banderaMtl = !banderaMtl, display();
+		case '3': //Todavía no se usa
+			banderaMtl = !banderaMtl;
 			cout << "Mtl: " << banderaMtl << endl;
 			display();
-			break;*/
+			break;
 		case 's':
 			switch (cam){
 			case libre:
 				cout << "Camara: Pies Sobre la Tierra" << endl;
 				cam = piesSobreTierra;
+				inclinacionX = mundo.escenas["plano_1"].rX;
+				inclinacionZ = mundo.escenas["plano_1"].rZ;
 				display();
 				break;
 			case piesSobreTierra:
@@ -305,7 +318,7 @@ void specialKeys(int key, int x, int y) {
 		switch (key) {
 			// ROTAR CAMARA LA DERECHA
 		case GLUT_KEY_RIGHT:
-			lon += VELOCIDAD_ROT;
+			lon -= VELOCIDAD_ROT;
 			//c[cam].anguloCamaraY += VELOCIDAD_ROT;
 			c[cam].posCamPieX = sphere2X(mag, lat, lon);
 			c[cam].posCamPieY = sphere2Y(mag, lat);
@@ -314,7 +327,7 @@ void specialKeys(int key, int x, int y) {
 			break;
 			// ROTAR CAMARA LA IZQUIERDA
 		case GLUT_KEY_LEFT:
-			lon -= VELOCIDAD_ROT;
+			lon += VELOCIDAD_ROT;
 			//c[cam].anguloCamaraY -= VELOCIDAD_ROT;
 			c[cam].posCamPieX = sphere2X(mag, lat, lon);
 			c[cam].posCamPieY = sphere2Y(mag, lat);
@@ -364,27 +377,27 @@ void specialKeys(int key, int x, int y) {
 	case libre:
 		switch (key) {
 		case GLUT_KEY_LEFT:
-			c[cam].viewCamPieX -= VELOCIDAD_MOV;
+			c[cam].MoveZ(-VELOCIDAD_MOV);
 			display();
 			break;
 		case GLUT_KEY_RIGHT:
-			c[cam].viewCamPieX += VELOCIDAD_MOV;
+			c[cam].MoveZ(VELOCIDAD_MOV);
 			display();
 			break;
 		case GLUT_KEY_UP:
-			c[cam].viewCamPieY += VELOCIDAD_MOV;
+			c[cam].MoveY(VELOCIDAD_MOV);
 			display();
 			break;
 		case GLUT_KEY_DOWN:
-			c[cam].viewCamPieY -= VELOCIDAD_MOV;
+			c[cam].MoveY(-VELOCIDAD_MOV);
 			display();
 			break;
 		case GLUT_KEY_PAGE_UP:
-			c[cam].posCamPieZ --;
+			c[cam].MoveX(VELOCIDAD_MOV);
 			display();
 			break;
 		case GLUT_KEY_PAGE_DOWN:
-			c[cam].posCamPieZ ++;
+			c[cam].MoveX(-VELOCIDAD_MOV);
 			display();
 			break;
 		}
@@ -392,19 +405,23 @@ void specialKeys(int key, int x, int y) {
 	case piesSobreTierra:
 		switch (key) {
 		case GLUT_KEY_LEFT:
-			c[cam].viewCamPieX -= VELOCIDAD_MOV;
+			c[cam].MoveZ(VELOCIDAD_MOV * cos(inclinacionZ));
+			c[cam].MoveY(VELOCIDAD_MOV * sin(inclinacionZ));
 			display();
 			break;
 		case GLUT_KEY_RIGHT:
-			c[cam].viewCamPieX += VELOCIDAD_MOV;
+			c[cam].MoveZ(-VELOCIDAD_MOV * cos(inclinacionZ));
+			c[cam].MoveY(-VELOCIDAD_MOV * sin(inclinacionZ));
 			display();
 			break;
 		case GLUT_KEY_PAGE_UP:
-			c[cam].posCamPieZ --;
+			c[cam].MoveX(VELOCIDAD_MOV * cos(inclinacionX));
+			c[cam].MoveY(VELOCIDAD_MOV * sin(inclinacionX));
 			display();
 			break;
 		case GLUT_KEY_PAGE_DOWN:
-			c[cam].posCamPieZ ++;
+			c[cam].MoveX(-VELOCIDAD_MOV * cos(inclinacionX));
+			c[cam].MoveY(-VELOCIDAD_MOV * sin(inclinacionX));
 			display();
 			break;
 		}

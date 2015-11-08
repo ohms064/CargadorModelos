@@ -16,7 +16,8 @@
 <escalamiento link_1 0.5 0.5 0.5>
 
 <posicion plano_1 0.0 -1.0 0.0>
-<escalamiento plano_1 10.0 10.0 10.0>
+<escalamiento plano_1 20.0 20.0 20.0>
+<rotacion plano_1 0.0 0.0 10.0>
 
 
 #NOTA las rotaciones son en radianes en el standar, pero si lo dejaron en grados no hay problema

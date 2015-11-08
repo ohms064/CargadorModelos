@@ -22,5 +22,9 @@ public:
 
 	Camera();
 	~Camera();
+
+	void MoveX(float speed);
+	void MoveY(float speed);
+	void MoveZ(float speed);
 };
 
