@@ -346,11 +346,17 @@ void specialKeys(int key, int x, int y) {
 			velocidadRotacion -= 0.5;
 			break;
 		case GLUT_KEY_PAGE_UP:
-			c[cam].posCamPieZ --;
+			mag--;
+			c[cam].posCamPieX = sphere2X(mag, lat, lon);
+			c[cam].posCamPieY = sphere2Y(mag, lat);
+			c[cam].posCamPieZ = sphere2Z(mag, lat, lon);
 			display();
 			break;
 		case GLUT_KEY_PAGE_DOWN:
-			c[cam].posCamPieZ ++;
+			mag++;
+			c[cam].posCamPieX = sphere2X(mag, lat, lon);
+			c[cam].posCamPieY = sphere2Y(mag, lat);
+			c[cam].posCamPieZ = sphere2Z(mag, lat, lon);
 			display();
 			break;
 		}
