@@ -21,7 +21,6 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
-!/CargadorModelos/terrain.obj
 
 # Roslyn cache directories
 *.ide/
@@ -45,6 +44,7 @@ dlldata.c
 *.ilk
 *.meta
 *.obj
+!/CargadorModelos/terrain.obj
 *.pch
 *.pdb
 *.pgc
