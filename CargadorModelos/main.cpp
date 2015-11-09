@@ -19,6 +19,9 @@ using namespace std;
 #define VELOCIDAD_MOV 0.1f
 // Poner aquí el nombre del archivo sin el .obj, es muy importante que el archivo exista
 #define NOMBRE_ARCHIVO "archivo"
+#define RAD2DEG 180/M_PI
+#define DEG2RAD M_PI/180
+
 //---------------------------------
 ModelosWorld mundo;
 
@@ -118,9 +121,9 @@ void dibujaWorld(){
 	for (itr = mundo.escenas.begin(); itr != mundo.escenas.end(); ++itr){//Se transforman y dibuan escenas.
 		glPushMatrix();
 		glTranslatef((*itr).second.pX, (*itr).second.pY, (*itr).second.pZ);
-		glRotatef((*itr).second.rX, 1, 0, 0);
-		glRotatef((*itr).second.rY, 0, 1, 0);
-		glRotatef((*itr).second.rZ, 0, 0, 1);
+		glRotatef((*itr).second.rX * RAD2DEG, 1, 0, 0);
+		glRotatef((*itr).second.rY * RAD2DEG, 0, 1, 0);
+		glRotatef((*itr).second.rZ * RAD2DEG, 0, 0, 1);
 		glScalef((*itr).second.sX, (*itr).second.sY, (*itr).second.sZ);
 		dibujaObjeto(mundo.escenas[(*itr).first]);
 		glPopMatrix();
@@ -128,9 +131,9 @@ void dibujaWorld(){
 	for (itr = mundo.objetos.begin(); itr != mundo.objetos.end(); ++itr){//Se transforman y dibujan los objetos.
 		glPushMatrix();
 		glTranslatef((*itr).second.pX, (*itr).second.pY, (*itr).second.pZ);
-		glRotatef((*itr).second.rX * 180 / M_PI, 1, 0, 0);
-		glRotatef((*itr).second.rY * 180 / M_PI, 0, 1, 0);
-		glRotatef((*itr).second.rZ * 180 / M_PI, 0, 0, 1);
+		glRotatef((*itr).second.rX * RAD2DEG, 1, 0, 0);
+		glRotatef((*itr).second.rY * RAD2DEG, 0, 1, 0);
+		glRotatef((*itr).second.rZ * RAD2DEG, 0, 0, 1);
 		glScalef((*itr).second.sX, (*itr).second.sY, (*itr).second.sZ);
 		dibujaObjeto(mundo.objetos[(*itr).first]);
 		glPopMatrix();
@@ -138,9 +141,9 @@ void dibujaWorld(){
 	for (itr = mundo.personajes.begin(); itr != mundo.personajes.end(); ++itr){//Se transforman y dibujan los personajes.
 		glPushMatrix();
 		glTranslatef((*itr).second.pX, (*itr).second.pY, (*itr).second.pZ);
-		glRotatef((*itr).second.rX, 1, 0, 0);
-		glRotatef((*itr).second.rY, 0, 1, 0);
-		glRotatef((*itr).second.rZ, 0, 0, 1);
+		glRotatef((*itr).second.rX * RAD2DEG, 1, 0, 0);
+		glRotatef((*itr).second.rY * RAD2DEG, 0, 1, 0);
+		glRotatef((*itr).second.rZ * RAD2DEG, 0, 0, 1);
 		glScalef((*itr).second.sX, (*itr).second.sY, (*itr).second.sZ);
 		dibujaObjeto(mundo.personajes[(*itr).first]);
 		glPopMatrix();
@@ -405,13 +408,13 @@ void specialKeys(int key, int x, int y) {
 	case piesSobreTierra:
 		switch (key) {
 		case GLUT_KEY_LEFT:
-			c[cam].MoveZ(VELOCIDAD_MOV * cos(inclinacionZ));
-			c[cam].MoveY(VELOCIDAD_MOV * sin(inclinacionZ));
+			c[cam].MoveZ(-VELOCIDAD_MOV * cos(inclinacionZ));
+			c[cam].MoveY(-VELOCIDAD_MOV * sin(inclinacionZ));
 			display();
 			break;
 		case GLUT_KEY_RIGHT:
-			c[cam].MoveZ(-VELOCIDAD_MOV * cos(inclinacionZ));
-			c[cam].MoveY(-VELOCIDAD_MOV * sin(inclinacionZ));
+			c[cam].MoveZ(VELOCIDAD_MOV * cos(inclinacionZ));
+			c[cam].MoveY(VELOCIDAD_MOV * sin(inclinacionZ));
 			display();
 			break;
 		case GLUT_KEY_PAGE_UP:
