@@ -339,16 +339,41 @@ void specialKeys(int key, int x, int y) {
 			break;
 			// ROTAR CAMARA HACIA ARRIBA
 		case GLUT_KEY_UP:
-			lat += VELOCIDAD_ROT;
+			if (lat == 90){
+				c[cam].upCamPieY = -1;
+			}
+			if (lat == 270){
+				c[cam].upCamPieY = 1;
+			}
+			lat = (lat<355)? lat+VELOCIDAD_ROT: 0;
 			//c[cam].anguloCamaraX += VELOCIDAD_ROT;
 			c[cam].posCamPieX = sphere2X(mag, lat, lon);
 			c[cam].posCamPieY = sphere2Y(mag, lat);
 			c[cam].posCamPieZ = sphere2Z(mag, lat, lon);
 			display();
+
+			cout << "posCamPieX: " << c[cam].posCamPieX << endl; //" " << sphere2X(mag, lat, lon) << endl;
+			cout << "posCamPieY: " << c[cam].posCamPieY << endl; //" " << sphere2Y(mag, lat, lon) << endl;
+			cout << "posCamPieZ: " << c[cam].posCamPieZ << endl; //" " << sphere2Z(mag, lat, lon) << endl;
+
+			cout << "viewCamPieX: " << c[cam].viewCamPieX << endl;
+			cout << "viewCamPieY: " << c[cam].viewCamPieY << endl;
+			cout << "viewCamPieZ: " << c[cam].viewCamPieZ << endl;
+
+			cout << "upCamPieX: " << c[cam].upCamPieX << endl;
+			cout << "upCamPieY: " << c[cam].upCamPieY << endl;
+			cout << "upCamPieZ: " << c[cam].upCamPieZ << endl;
+			cout << endl << endl << endl << endl << endl;
 			break;
 			// ROTAR CAMARA HACIA ABAJO
 		case GLUT_KEY_DOWN:
-			lat -= VELOCIDAD_ROT;
+			if (lat == 90){
+				c[cam].upCamPieY = 1;
+			}
+			if (lat == 270){
+				c[cam].upCamPieY = -1;
+			}
+			lat = (lat>5)? lat-VELOCIDAD_ROT: 360;
 			//c[cam].anguloCamaraX -= VELOCIDAD_ROT;
 			c[cam].posCamPieX = sphere2X(mag, lat, lon);
 			c[cam].posCamPieY = sphere2Y(mag, lat);
