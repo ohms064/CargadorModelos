@@ -26,11 +26,13 @@ void Camera::MoveX(float speed) {
 
 	posCamPieX += x*speed;
 	posCamPieZ += z*speed;
+
 }
 
 void Camera::MoveY(float speed) {
-	posCamPieY += 2 * speed;
-	viewCamPieY += 2 * speed;
+	posCamPieY += 10 * speed;
+	viewCamPieY += 10 * speed;
+
 }
 
 void Camera::MoveZ(float speed) {
@@ -41,6 +43,7 @@ void Camera::MoveZ(float speed) {
 	posCamPieZ += x*speed;
 	viewCamPieX += z*speed*-1;
 	viewCamPieZ += x*speed;
+
 }
 
 Camera::~Camera(){
